@@ -97,13 +97,16 @@ async def main() -> None:
     else:
         save_path = Path(__file__).resolve().parent / "save.json"
 
+    heat_icon = _load_texture("HeatIcon.png")
     heat_tex = _load_texture("Heat.png")
     power_tex = _load_texture("Power.png")
+    power_icon = _load_texture("PowerIcon.png")
     grid_tex = _load_texture("GridTile.png")
     grid_full = _load_texture("MainGrid.png")
     grid_backer = _load_texture("GridBacker.png")
     grid_frame = _load_texture("GridFrame.png")
     side_grid = _load_texture("SideGrid.png")
+    main_upgrades = _load_texture("MainUpgrades.png")
     btn_big = _load_texture("ButtonBIG.png")
     btn_big_hover = _load_texture("ButtonBIGHover.png")
     btn_big_pressed = _load_texture("ButtonBIGClicked.png")
@@ -243,8 +246,8 @@ async def main() -> None:
             pass
 
     ui = Ui(
-        heat_icon=heat_tex,
-        power_icon=power_tex,
+        heat_icon=heat_icon,
+        power_icon=power_icon,
         button_base=btn_big,
         button_hover=btn_big_hover,
         button_pressed=btn_big_pressed,
@@ -597,14 +600,24 @@ async def main() -> None:
             backer_x = frame_x + layout.grid_backer_offset_x
             backer_y = frame_y + layout.grid_backer_offset_y
 
-            draw_texture_pro(
-                grid_backer,
-                Rectangle(0, 0, grid_backer.width, grid_backer.height),
-                Rectangle(backer_x, backer_y, grid_backer.width, grid_backer.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
+            if sim.view_mode != "upgrades":
+                draw_texture_pro(
+                    grid_backer,
+                    Rectangle(0, 0, grid_backer.width, grid_backer.height),
+                    Rectangle(backer_x, backer_y, grid_backer.width, grid_backer.height),
+                    Vector2(0, 0),
+                    0.0,
+                    Color(255, 255, 255, 255),
+                )
+            else:
+                draw_texture_pro(
+                    main_upgrades,
+                    Rectangle(0, 0, main_upgrades.width, main_upgrades.height),
+                    Rectangle(frame_x, frame_y, main_upgrades.width, main_upgrades.height),
+                    Vector2(0, 0),
+                    0.0,
+                    Color(255, 255, 255, 255),
+                )
 
             if sim.view_mode == "reactor":
                 # ── Reactor grid view ──────────────────────────────────

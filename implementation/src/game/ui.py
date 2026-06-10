@@ -520,8 +520,8 @@ class Ui:
             cell_w = layout.upgrade_cell_size
             cell_h = layout.upgrade_cell_size
         gap = layout.upgrade_gap
-        ox = layout.upgrade_grid_x
-        oy = layout.upgrade_grid_y
+        ox = layout.upgrade_grid_x + 5
+        oy = layout.upgrade_grid_y + 6
 
         hovered_upgrade: Optional[UpgradeType] = None
 

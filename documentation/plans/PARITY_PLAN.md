@@ -1,11 +1,12 @@
 - [x] Shift left click and Shift right click
 - [ ] Text Alignment
-- [ ] Power / Heat icons covering indicator bars
+- [x] Power / Heat icons covering indicator bars
+- [ ] Improve power/heat icon alignment
 - [x] Background cell colour
 - [ ] Options Screen missing textures
 - [ ] Formula display in help menu
 - [ ] EP Formula not listed
-- [ ] Text screens have slightly wrong colour
+- [x] Upgrade screen has wrong colour
 - [ ] Prestige text needs reformatting to be neater
 - [ ] Upgrade Colours
 - [x] Decrease brightness more for out of budget upgrades
