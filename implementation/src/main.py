@@ -29,6 +29,7 @@ from raylib_compat import (
     get_mouse_wheel_move,
     get_time,
     is_key_pressed,
+    is_key_down,
     init_window,
     is_mouse_button_down,
     is_mouse_button_pressed,
@@ -40,6 +41,7 @@ from raylib_compat import (
     KEY_F1,
     KEY_F2,
     KEY_F3,
+    KEY_SHIFT,
     KEY_SPACE,
     KEY_ESCAPE,
     Rectangle,
@@ -494,11 +496,25 @@ async def main() -> None:
                             # Click-to-replace: always active for compatible components
                             cost = sim.get_component_cost(selected)
                             refund = Simulation.sell_value(existing)
-                            if sim.store.money + refund >= cost:
-                                sim.remove_component(cx, cy)
-                                sim.store.money += refund
-                                if sim.place_component(cx, cy, ReactorComponent(stats=selected)):
-                                    sim.store.money -= cost
+
+                            if is_key_down(KEY_SHIFT):
+                                existing_name = existing.stats.name
+                                for (mcx, mcy, _, mcomp) in sim.grid.iter_cells():
+                                    if mcomp and mcomp.stats.name == existing_name:
+                                        if sim.store.money + refund >= cost:
+                                            sim.remove_component(mcx, mcy, recompute_capacities=False)
+                                            sim.store.money += refund
+                                            if sim.place_component(mcx, mcy, ReactorComponent(stats=selected), recompute_capacities=False):
+                                                sim.store.money -= cost
+                                        else:
+                                            break
+                                sim.recompute_max_capacities()
+                            else:
+                                if sim.store.money + refund >= cost:
+                                    sim.remove_component(cx, cy)
+                                    sim.store.money += refund
+                                    if sim.place_component(cx, cy, ReactorComponent(stats=selected)):
+                                        sim.store.money -= cost
 
             # ── Right click — sell / deselect ────────────────────────
             # RE: Two deselect paths in unnamed_function_10410:
@@ -521,8 +537,16 @@ async def main() -> None:
                         existing = sim.grid.get(cx, cy, 0)
                         if existing is not None:
                             refund = Simulation.sell_value(existing)
-                            sim.remove_component(cx, cy)
-                            sim.store.money += refund
+                            if is_key_down(KEY_SHIFT):
+                                existing_name = existing.stats.name
+                                for (mcx, mcy, _, mcomp) in sim.grid.iter_cells():
+                                    if mcomp and mcomp.stats.name == existing_name:
+                                        sim.remove_component(mcx, mcy, recompute_capacities=False)
+                                        sim.store.money += refund
+                                sim.recompute_max_capacities()
+                            else:
+                                sim.remove_component(cx, cy)
+                                sim.store.money += refund
                         elif is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
                             sim.selected_component_index = -1
                         last_sell_cell = cell

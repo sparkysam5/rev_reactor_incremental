@@ -1204,7 +1204,7 @@ class Simulation:
         self.recompute_max_capacities()
         self.resize_grid_for_subspace()
 
-    def place_component(self, x: int, y: int, component: ReactorComponent, z: int = 0) -> bool:
+    def place_component(self, x: int, y: int, component: ReactorComponent, z: int = 0, recompute_capacities=True) -> bool:
         if self.grid is None or not self.grid.in_bounds(x, y, z):
             return False
         if self.grid.get(x, y, z) is not None:
@@ -1219,10 +1219,11 @@ class Simulation:
         self.grid.set(x, y, z, component)
         self.components.append(component)
         self._pulses_dirty = True
-        self.recompute_max_capacities()
+        if recompute_capacities:
+            self.recompute_max_capacities()
         return True
 
-    def remove_component(self, x: int, y: int, z: int = 0) -> Optional[ReactorComponent]:
+    def remove_component(self, x: int, y: int, z: int = 0, recompute_capacities=True) -> Optional[ReactorComponent]:
         if self.grid is None or not self.grid.in_bounds(x, y, z):
             return None
         existing = self.grid.get(x, y, z)
@@ -1234,7 +1235,8 @@ class Simulation:
         except ValueError:
             pass
         self._pulses_dirty = True
-        self.recompute_max_capacities()
+        if recompute_capacities:
+            self.recompute_max_capacities()
         return existing
 
     def selected_component(self) -> Optional[ComponentTypeStats]:

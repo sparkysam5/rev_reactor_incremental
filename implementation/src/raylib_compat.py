@@ -55,6 +55,7 @@ if not _WEB:
         "end_drawing": "EndDrawing",
         "get_frame_time": "GetFrameTime",
         "is_key_pressed": "IsKeyPressed",
+        "is_key_down": "isKeyDown",
         "load_texture": "LoadTexture",
         "unload_texture": "UnloadTexture",
         "draw_text": "DrawText",
@@ -205,6 +206,7 @@ else:
     KEY_F3 = 114
     KEY_F4 = 115
     KEY_F5 = 116
+    KEY_SHIFT = 16
     KEY_SPACE = 32
     KEY_ESCAPE = 27
     KEY_X = 88
@@ -381,6 +383,9 @@ else:
 
     def is_key_pressed(key: int) -> bool:
         return key in _input_state.get('keysPressed', [])
+    
+    def is_key_down(key: int) -> bool:
+        return key in _input_state.get('keysDown', [])
 
     # ── Utilities ────────────────────────────────────────────────────
 

@@ -104,8 +104,8 @@ class Ui:
         heat_delta = sim.last_heat_change
         heat_sign = "+" if heat_delta >= 0 else ""
         heat_label = (
-            f"{format_number_with_suffix(sim.reactor_heat, max_decimals=0)}/"
-            f"{format_number_with_suffix(sim.max_reactor_heat, max_decimals=0)} "
+            f"{format_number_with_suffix(sim.reactor_heat, max_decimals=3)}/"
+            f"{format_number_with_suffix(sim.max_reactor_heat, max_decimals=3)} "
             f"({heat_sign}{format_number_with_suffix(heat_delta, min_decimals=1)}/t)"
         )
         heat_max_w = layout.heat_bar_x + layout.bar_width - text_x - 4

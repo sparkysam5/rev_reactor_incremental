@@ -1,4 +1,4 @@
-- [ ] Shift left click and Shift right click
+- [x] Shift left click and Shift right click
 - [ ] Text Alignment
 - [ ] Power / Heat icons covering indicator bars
 - [x] Background cell colour
