@@ -954,8 +954,7 @@ class Simulation:
         if projected_heat > self.max_reactor_heat and heat_gen <= 0:
             overheat_decay = (projected_heat - self.max_reactor_heat) * 0.05
             auto_vent = max(auto_vent, overheat_decay)
-        vented = min(projected_heat, auto_vent) if (auto_vent > 0 and projected_heat > 0) else 0.0
-        self.last_heat_change = heat_gen - vented
+        self.last_heat_change = heat_gen - auto_vent
 
         self.preview_vent_capacity = self.vent_dissipation_capacity_per_tick()
         self.preview_outlet_capacity = self.outlet_transfer_capacity_per_tick()

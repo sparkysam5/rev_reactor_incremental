@@ -584,7 +584,7 @@ async def main() -> None:
 
             if sim.view_mode == "reactor":
                 # ── Reactor grid view ──────────────────────────────────
-                grid.draw(Color(255, 255, 255, 120))
+                grid.draw(Color(255, 255, 255, 255))
 
                 use_scissor = sim.grid is not None and sim.grid.needs_scroll
 

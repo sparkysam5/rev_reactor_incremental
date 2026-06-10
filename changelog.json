@@ -1,0 +1,470 @@
+[
+  {
+    "ts": "2026-02-14T13:17:22+01:00",
+    "message": "Add manually ordered 32x32 fuel-cell tier sprite sheet with row padding"
+  },
+  {
+    "ts": "2026-02-13T14:34:21+01:00",
+    "message": "Fix legacy export component ordering and Y-axis transform"
+  },
+  {
+    "ts": "2026-02-13T14:27:58+01:00",
+    "message": "Route iframe save exports through host bridge for sandbox-safe downloads"
+  },
+  {
+    "ts": "2026-02-13T14:24:28+01:00",
+    "message": "Add dual save export modes for legacy compatibility and full-state sharing"
+  },
+  {
+    "ts": "2026-02-13T14:20:07+01:00",
+    "message": "Fix save export to match original Reactor Idle encrypted format"
+  },
+  {
+    "ts": "2026-02-13T00:16:30+01:00",
+    "message": "Tune Bevy runtime config for data-driven 2D app profile"
+  },
+  {
+    "ts": "2026-02-13T00:13:13+01:00",
+    "message": "Use recovered assets and data-driven placement in Bevy runtime"
+  },
+  {
+    "ts": "2026-02-12T23:54:32+01:00",
+    "message": "Advance Bevy port to playable loop with data-driven catalog and persistence"
+  },
+  {
+    "ts": "2026-02-12T23:47:37+01:00",
+    "message": "Build Bevy playable reactor loop with modular app systems"
+  },
+  {
+    "ts": "2026-02-12T23:47:18+01:00",
+    "message": "Expand Bevy sim core with deterministic component heat/pulse mechanics"
+  },
+  {
+    "ts": "2026-02-12T23:47:15+01:00",
+    "message": "Add engine-agnostic Bevy data and save codecs for Python parity"
+  },
+  {
+    "ts": "2026-02-12T23:37:18+01:00",
+    "message": "docs: define phased Bevy migration to de-risk parity cutover"
+  },
+  {
+    "ts": "2026-02-12T23:37:18+01:00",
+    "message": "Add deterministic Rust core primitives to enable parity-first simulation porting"
+  },
+  {
+    "ts": "2026-02-12T23:37:18+01:00",
+    "message": "Scaffold Bevy app shell to establish Rust reimplementation entrypoint"
+  },
+  {
+    "ts": "2026-02-12T23:29:53+01:00",
+    "message": "Tighten iframe height to match 630px game frame"
+  },
+  {
+    "ts": "2026-02-12T23:28:13+01:00",
+    "message": "Reduce extra iframe bottom space around game canvas"
+  },
+  {
+    "ts": "2026-02-12T23:25:16+01:00",
+    "message": "Make sandboxed game iframe full-width and visually transparent"
+  },
+  {
+    "ts": "2026-02-12T23:19:13+01:00",
+    "message": "Use postMessage bridge for save/load/theme in sandboxed iframe"
+  },
+  {
+    "ts": "2026-02-12T23:13:07+01:00",
+    "message": "Allow same-origin in sandboxed game iframe"
+  },
+  {
+    "ts": "2026-02-12T23:11:57+01:00",
+    "message": "Try sandboxed iframe execution with allow-scripts only"
+  },
+  {
+    "ts": "2026-02-12T20:30:26+01:00",
+    "message": "Force non-shrinking 900x630 iframe game viewport"
+  },
+  {
+    "ts": "2026-02-12T20:27:22+01:00",
+    "message": "Fix iframe layout to enforce 900x630 with no internal scroll"
+  },
+  {
+    "ts": "2026-02-12T20:24:38+01:00",
+    "message": "Add iframe watchdog host for WebGL/Pyodide crash recovery"
+  },
+  {
+    "ts": "2026-02-11T00:06:30+01:00",
+    "message": "Handle shallow Cloudflare clones for changelog generation"
+  },
+  {
+    "ts": "2026-02-11T00:02:27+01:00",
+    "message": "Drop web/changelog.txt references and use git-log changelog"
+  },
+  {
+    "ts": "2026-02-10T23:59:44+01:00",
+    "message": "Fix Cloudflare build when uv is unavailable"
+  },
+  {
+    "ts": "2026-02-11T07:54:06+09:00",
+    "message": "Merge pull request #1 from banteg/build/uv-packaging-migration"
+  },
+  {
+    "ts": "2026-02-11T02:33:27+04:00",
+    "message": "build: adopt uv-managed packaging for reproducible python workflows"
+  },
+  {
+    "ts": "2026-02-09T18:00:10+01:00",
+    "message": "Add rich scrollable help panel with sprites, grids, and drag scroll"
+  },
+  {
+    "ts": "2026-02-09T16:21:47+01:00",
+    "message": "Soften grayscale tint values for multiply composite"
+  },
+  {
+    "ts": "2026-02-09T16:18:34+01:00",
+    "message": "Remove accidentally committed dist/renderer.js"
+  },
+  {
+    "ts": "2026-02-09T16:13:20+01:00",
+    "message": "Fix grayscale tint in dist renderer.js too"
+  },
+  {
+    "ts": "2026-02-09T16:10:34+01:00",
+    "message": "Fix grayscale tint rendering transparency instead of darkening"
+  },
+  {
+    "ts": "2026-02-09T15:53:46+01:00",
+    "message": "Remove auto-vent rate from heat button, set cap to 3dp"
+  },
+  {
+    "ts": "2026-02-09T15:52:59+01:00",
+    "message": "Remove 'Sell Power:' text from sell button, keep only numbers"
+  },
+  {
+    "ts": "2026-02-09T15:52:10+01:00",
+    "message": "Set heat/power bar current/max to 0dp and deltas to 3dp"
+  },
+  {
+    "ts": "2026-02-09T15:50:44+01:00",
+    "message": "Increase decimal precision on vent/sell buttons and statistics caps"
+  },
+  {
+    "ts": "2026-02-09T15:48:42+01:00",
+    "message": "Fix number formatting to match original game's 3-decimal precision"
+  },
+  {
+    "ts": "2026-02-09T13:48:25+01:00",
+    "message": "Fix heat delta formatting and vent cap to show only active dissipation"
+  },
+  {
+    "ts": "2026-02-09T12:43:10+01:00",
+    "message": "Fix title and description offset when per-tick stats are shown"
+  },
+  {
+    "ts": "2026-02-09T12:37:43+01:00",
+    "message": "Add version polling to notify users of new deploys"
+  },
+  {
+    "ts": "2026-02-09T12:34:09+01:00",
+    "message": "Limit changelog height with scrollable viewport"
+  },
+  {
+    "ts": "2026-02-09T12:32:45+01:00",
+    "message": "Unshallow git clone before generating changelog"
+  },
+  {
+    "ts": "2026-02-09T12:30:46+01:00",
+    "message": "Generate changelog from git log instead of manual file"
+  },
+  {
+    "ts": "2026-02-09T12:28:57+01:00",
+    "message": "Restrict left-click drag panning to grid viewport"
+  },
+  {
+    "ts": "2026-02-09T12:27:25+01:00",
+    "message": "Add left-click drag panning and disable browser autoscroll"
+  },
+  {
+    "ts": "2026-02-08T17:10:33+01:00",
+    "message": "Show timestamped changelog entries sorted newest first"
+  },
+  {
+    "ts": "2026-02-08T17:08:04+01:00",
+    "message": "Inline changelog loader and update game attribution"
+  },
+  {
+    "ts": "2026-02-08T17:06:45+01:00",
+    "message": "Block grid placement on menu-back transition frame"
+  },
+  {
+    "ts": "2026-02-08T17:05:23+01:00",
+    "message": "Add visible game attribution and ship changelog assets"
+  },
+  {
+    "ts": "2026-02-08T17:02:35+01:00",
+    "message": "Generate site changelog from text source"
+  },
+  {
+    "ts": "2026-02-08T16:57:13+01:00",
+    "message": "Preserve drag build/sell across canvas exit"
+  },
+  {
+    "ts": "2026-02-08T16:46:09+01:00",
+    "message": "Fix decayed sprite alpha holes and darken unpurchasable items"
+  },
+  {
+    "ts": "2026-02-08T16:41:44+01:00",
+    "message": "Use fixed hidden-tab dt to avoid catch-up bursts"
+  },
+  {
+    "ts": "2026-02-08T16:39:05+01:00",
+    "message": "Keep web simulation ticking in hidden tabs"
+  },
+  {
+    "ts": "2026-02-08T16:31:51+01:00",
+    "message": "Use single-outlet rate for warning indicator checks"
+  },
+  {
+    "ts": "2026-02-08T16:14:07+01:00",
+    "message": "Fix decayed grid tiles being 4x too large"
+  },
+  {
+    "ts": "2026-02-08T16:09:56+01:00",
+    "message": "Fix decayed button hover/pressed sprites appearing to shrink"
+  },
+  {
+    "ts": "2026-02-08T16:05:38+01:00",
+    "message": "Regenerate decayed sprites preserving original colors"
+  },
+  {
+    "ts": "2026-02-08T15:58:21+01:00",
+    "message": "Replace candy theme with decayed/abandoned theme"
+  },
+  {
+    "ts": "2026-02-08T15:45:45+01:00",
+    "message": "Regenerate all candy sprites with pro model for crisp pixel art"
+  },
+  {
+    "ts": "2026-02-08T15:16:52+01:00",
+    "message": "Regenerate all 185 candy sprites with transparency and themed UI"
+  },
+  {
+    "ts": "2026-02-08T15:05:12+01:00",
+    "message": "Clarify outlet warning description text"
+  },
+  {
+    "ts": "2026-02-08T14:52:57+01:00",
+    "message": "Base outlet warnings on adjacent vent capacity"
+  },
+  {
+    "ts": "2026-02-08T14:50:30+01:00",
+    "message": "Scope outlet warning icons and text to affected outlets"
+  },
+  {
+    "ts": "2026-02-08T14:38:57+01:00",
+    "message": "Render outlet bottleneck warnings on outlet components"
+  },
+  {
+    "ts": "2026-02-08T14:34:37+01:00",
+    "message": "Prevent locked shop pages from hiding tab UI"
+  },
+  {
+    "ts": "2026-02-08T14:33:00+01:00",
+    "message": "Improve outlet/vent bottleneck warning visibility"
+  },
+  {
+    "ts": "2026-02-08T14:21:26+01:00",
+    "message": "Fix theme toggle by wiring click handler from loader.js"
+  },
+  {
+    "ts": "2026-02-08T14:19:48+01:00",
+    "message": "Add candy theme sprites and runtime theme toggle"
+  },
+  {
+    "ts": "2026-02-08T13:30:24+01:00",
+    "message": "Remove text overlay, render everything on DPR-scaled game canvas"
+  },
+  {
+    "ts": "2026-02-08T13:26:31+01:00",
+    "message": "Fix text overlay alignment and DPR-scale game canvas for crisp rendering"
+  },
+  {
+    "ts": "2026-02-08T13:17:08+01:00",
+    "message": "Route text rendering to DPR-scaled overlay canvas for smooth anti-aliased text"
+  },
+  {
+    "ts": "2026-02-08T13:12:10+01:00",
+    "message": "Remove last stale DPR references (deviceScaleX/Y in text rendering)"
+  },
+  {
+    "ts": "2026-02-08T13:11:06+01:00",
+    "message": "Fix stale logicalWidth/Height reference in CLEAR_BG opcode"
+  },
+  {
+    "ts": "2026-02-08T13:09:44+01:00",
+    "message": "Remove stale configureCanvas() call in renderBatch"
+  },
+  {
+    "ts": "2026-02-08T13:08:28+01:00",
+    "message": "Fix fuzzy rendering: use 1:1 pixel resolution, no DPR scaling"
+  },
+  {
+    "ts": "2026-02-08T13:05:57+01:00",
+    "message": "web: refine canvas scale mapping for sharper 100% text"
+  },
+  {
+    "ts": "2026-02-08T13:02:54+01:00",
+    "message": "agents: require auto-push after each local commit"
+  },
+  {
+    "ts": "2026-02-08T13:02:31+01:00",
+    "message": "web: fix fuzzy 100% zoom by using exact DPR backing"
+  },
+  {
+    "ts": "2026-02-08T13:00:12+01:00",
+    "message": "web: sharpen canvas text rendering"
+  },
+  {
+    "ts": "2026-02-08T12:54:52+01:00",
+    "message": "ui: revert vent button label to generic cap wording"
+  },
+  {
+    "ts": "2026-02-08T12:53:36+01:00",
+    "message": "ui/sim: show vent cap on button and clamp reactor heat non-negative"
+  },
+  {
+    "ts": "2026-02-08T12:50:44+01:00",
+    "message": "sim/ui: keep preview stats live while paused and expose dissipation caps"
+  },
+  {
+    "ts": "2026-02-08T12:44:27+01:00",
+    "message": "ui: tighten text layout and formatting across core screens"
+  },
+  {
+    "ts": "2026-02-08T12:39:35+01:00",
+    "message": "ui/web: lower top banner text and sharpen canvas fonts"
+  },
+  {
+    "ts": "2026-02-08T12:37:16+01:00",
+    "message": "input: keep store selection while right-drag selling"
+  },
+  {
+    "ts": "2026-02-08T12:35:43+01:00",
+    "message": "input: retry placement every tick while left mouse is held"
+  },
+  {
+    "ts": "2026-02-08T12:29:36+01:00",
+    "message": "web: upgrade Pyodide runtime to mitigate renderer fast-fail"
+  },
+  {
+    "ts": "2026-02-08T12:02:10+01:00",
+    "message": "Restore zero-copy HEAPF64 rendering \u2014 crashes predate this code"
+  },
+  {
+    "ts": "2026-02-08T11:59:39+01:00",
+    "message": "Revert zero-copy HEAPF64 approach to fix WASM range check crash"
+  },
+  {
+    "ts": "2026-02-08T03:20:08+01:00",
+    "message": "Proper vsync: await JS rAF Promise instead of asyncio.sleep"
+  },
+  {
+    "ts": "2026-02-08T03:17:05+01:00",
+    "message": "Fix frame throttle: use asyncio.sleep(1/60) instead of rAF future"
+  },
+  {
+    "ts": "2026-02-08T03:08:25+01:00",
+    "message": "Throttle web game loop to vsync via requestAnimationFrame"
+  },
+  {
+    "ts": "2026-02-08T02:56:01+01:00",
+    "message": "Reduce per-frame JS heap allocations across rendering pipeline"
+  },
+  {
+    "ts": "2026-02-08T02:42:31+01:00",
+    "message": "Fix WASM memory access: use Emscripten HEAPF64 instead of wasmMemory"
+  },
+  {
+    "ts": "2026-02-08T02:37:37+01:00",
+    "message": "Zero-copy WASM memory view for command buffer rendering"
+  },
+  {
+    "ts": "2026-02-07T18:58:36+01:00",
+    "message": "Eliminate per-frame buffer copy in web renderer"
+  },
+  {
+    "ts": "2026-02-07T18:54:13+01:00",
+    "message": "Fix active venting/exchangers to use tier-weighted capacitor sum"
+  },
+  {
+    "ts": "2026-02-07T18:32:17+01:00",
+    "message": "Reduce per-frame allocation churn in web renderer"
+  },
+  {
+    "ts": "2026-02-07T18:26:56+01:00",
+    "message": "Guard JsProxy .destroy() calls with hasattr check"
+  },
+  {
+    "ts": "2026-02-07T18:25:37+01:00",
+    "message": "Fix JsProxy memory leak causing WASM stack_buffer_overrun"
+  },
+  {
+    "ts": "2026-02-07T17:53:32+01:00",
+    "message": "Fix GitHub link in header nav"
+  },
+  {
+    "ts": "2026-02-07T17:46:57+01:00",
+    "message": "Fix text overflow in UI; add Cloudflare Pages build"
+  },
+  {
+    "ts": "2026-02-07T17:38:51+01:00",
+    "message": "Make all modified files dual-compatible (native+web); redesign site"
+  },
+  {
+    "ts": "2026-02-07T17:12:13+01:00",
+    "message": "Add pure-Python AES decrypt for original saves; parallelize loading"
+  },
+  {
+    "ts": "2026-02-07T17:07:32+01:00",
+    "message": "Fix save import: add raw JSON as first format to try"
+  },
+  {
+    "ts": "2026-02-07T17:05:16+01:00",
+    "message": "Fix save import data flow: revert dialog change, fix polling"
+  },
+  {
+    "ts": "2026-02-07T17:02:28+01:00",
+    "message": "Fix save import: trigger file dialog from user gesture context"
+  },
+  {
+    "ts": "2026-02-07T16:55:52+01:00",
+    "message": "Fix save import: use frame-based polling instead of concurrent runPython"
+  },
+  {
+    "ts": "2026-02-07T16:53:17+01:00",
+    "message": "Fix empty component descriptions in web build"
+  },
+  {
+    "ts": "2026-02-07T16:51:02+01:00",
+    "message": "Fix empty shop: skip sprite filesystem check in web build"
+  },
+  {
+    "ts": "2026-02-07T16:45:33+01:00",
+    "message": "Fix Renderer/Input not visible to Pyodide's js module"
+  },
+  {
+    "ts": "2026-02-07T16:44:35+01:00",
+    "message": "Fix texture ID mismatch between Python and JS"
+  },
+  {
+    "ts": "2026-02-07T16:41:47+01:00",
+    "message": "Port game to browser via Pyodide + Canvas2D"
+  },
+  {
+    "ts": "2026-02-07T16:16:14+01:00",
+    "message": "Add git usage requirement to AGENTS.md"
+  },
+  {
+    "ts": "2026-02-07T16:14:25+01:00",
+    "message": "Initial commit: full project state with RE artifacts, documentation, and implementation"
+  }
+]

@@ -11,18 +11,18 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SPRITES_SRC="../rev_reactor/decompilation/recovered/recovered_assets/sprites"
-SPRITES_CANDY_SRC="../rev_reactor/decompilation/recovered/recovered_assets/sprites_decayed"
+SPRITES_SRC="../rev_reactor_incremental/decompilation/recovered/recovered_assets/sprites"
+SPRITES_CANDY_SRC="../rev_reactor_incremental/decompilation/recovered/recovered_assets/sprites_decayed"
 SPRITES_DST="web/assets/sprites"
 SPRITES_CANDY_DST="web/assets/sprites_decayed"
-ANALYSIS_SRC="../rev_reactor/decompilation/recovered/recovered_analysis"
+ANALYSIS_SRC="../rev_reactor_incremental/decompilation/recovered/recovered_analysis"
 
 echo "=== Rev Reactor Web Build ==="
 
 # 1. Set up sprite assets
 if [ ! -d "$SPRITES_SRC" ]; then
     echo "Error: Sprites directory not found at $SPRITES_SRC"
-    echo "Expected: /home/mixy/projects/rev_reactor/decompilation/recovered/recovered_assets/sprites"
+    echo "Expected: ../rev_reactor_incremental/decompilation/recovered/recovered_assets/sprites"
     exit 1
 fi
 
@@ -79,5 +79,5 @@ fi
 
 echo ""
 echo "Build complete. To run:"
-echo "  cd $(pwd) && uv run python -m http.server 8080"
+echo "  cd $(pwd) && npx http-server --cors -p 8080"
 echo "  Open http://localhost:8080/web/"

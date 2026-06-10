@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900">
+    <meta name="description" content="Reactor Incremental reimplementation — nuclear.mixy1">
+    <link rel="icon" type="image/gif" href="web/mixy1.gif">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>nuclear.mixy1</title>
+    <link rel="stylesheet" href="web/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <img src="web/assets/sprites/Fuel5-4.png" alt="" class="logo-sprite">
+                <span>nuclear.</span><img src="web/mixy1.gif" alt="mixy1" class="logo-gif">
+            </a>
+            <nav class="nav-links">
+                <a href="https://mixy.one" target="_blank" rel="noopener">mixy.one</a>
+                <a href="https://github.com/mixy1" target="_blank" rel="noopener">GitHub</a>
+                <a href="#changelog">Changelog</a>
+                <button id="theme-toggle" class="theme-toggle-btn">Decayed</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="game-shell">
+            <iframe
+                id="game-frame"
+                class="game-frame"
+                title="Reactor Incremental Game"
+                src="web/game.html"
+                data-base-src="web/game.html"
+                loading="eager"
+                scrolling="no"
+                sandbox="allow-scripts"
+                allowtransparency="true"
+                referrerpolicy="same-origin"
+            ></iframe>
+            <p id="watchdog-status" class="game-watchdog-status" aria-live="polite"></p>
+            <p class="game-attribution">
+                Original game created by
+                <a href="https://www.kongregate.com/en/games/cael/reactor-incremental" target="_blank" rel="noopener">cael</a>.
+                This version is a Python reimplementation by
+                <img src="web/mixy1.gif" alt="mixy1" class="inline-mixy-gif">.
+            </p>
+        </div>
+    </main>
+
+    <section id="changelog" class="changelog">
+        <div class="changelog-content">
+            <h2>Changelog</h2>
+            <p class="changelog-subtitle">Generated from <code>git log</code> (newest first).</p>
+            <div id="changelog-entries" class="changelog-entries">
+                <p class="changelog-loading">Loading changelog...</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <a href="https://mixy.one" target="_blank" rel="noopener" title="Visit mixy.one">
+                    <img src="web/mixy1.gif" alt="mixy1" class="footer-mixy">
+                </a>
+                <span class="footer-text">reimplementation of my favourite game of all time</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://www.kongregate.com/en/games/cael/reactor-incremental" target="_blank" rel="noopener">
+                    Reactor Incremental
+                </a>
+                <span class="footer-sep">by</span>
+                <a href="https://www.kongregate.com/en/games/cael/reactor-incremental" target="_blank" rel="noopener">
+                    cael
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        (async function () {
+            const host = document.getElementById('changelog-entries');
+            if (!host) return;
+
+            function setMessage(text, cls) {
+                host.innerHTML = '';
+                const p = document.createElement('p');
+                p.className = cls;
+                p.textContent = text;
+                host.appendChild(p);
+            }
+
+            let entries;
+            try {
+                const resp = await fetch('changelog.json', { cache: 'no-cache' });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                entries = await resp.json();
+            } catch (_err) {
+                setMessage('Failed to load changelog.', 'changelog-error');
+                return;
+            }
+
+            if (!Array.isArray(entries)) {
+                setMessage('Invalid changelog format.', 'changelog-error');
+                return;
+            }
+
+            if (entries.length === 0) {
+                setMessage('No changelog entries found.', 'changelog-empty');
+                return;
+            }
+
+            entries = entries
+                .map((entry) => ({
+                    ts: String(entry.ts ?? ''),
+                    message: String(entry.message ?? '')
+                }))
+                .filter((entry) => entry.ts && entry.message);
+
+            entries.sort((a, b) => b.ts.localeCompare(a.ts));
+            host.innerHTML = '';
+            for (const entry of entries) {
+                const article = document.createElement('article');
+                article.className = 'changelog-entry';
+
+                const dateEl = document.createElement('div');
+                dateEl.className = 'changelog-date';
+                dateEl.textContent = entry.ts;
+                article.appendChild(dateEl);
+
+                const messageEl = document.createElement('p');
+                messageEl.className = 'changelog-message';
+                messageEl.textContent = entry.message;
+                article.appendChild(messageEl);
+
+                host.appendChild(article);
+            }
+        })();
+    </script>
+    <script>
+        (function () {
+            const frame = document.getElementById('game-frame');
+            const themeBtn = document.getElementById('theme-toggle');
+            const statusEl = document.getElementById('watchdog-status');
+            const SAVE_KEY = 'rev_reactor_save';
+
+            const CHECK_EVERY_MS = 1000;
+            const HEARTBEAT_TIMEOUT_MS = 6000;
+            const FIRST_BEAT_GRACE_MS = 20000;
+
+            let currentTheme = localStorage.getItem('sprite-theme') === 'decayed' ? 'decayed' : 'default';
+            let lastBeat = Date.now();
+            let frameLoadAt = Date.now();
+            let hasBeat = false;
+            let restartCount = 0;
+            let lastVisibilityChange = Date.now();
+            let wasBackgrounded = false;
+
+            function setStatus(message) {
+                if (!statusEl) return;
+                statusEl.textContent = message;
+            }
+
+            function applyThemeButton() {
+                if (!themeBtn) return;
+                themeBtn.classList.toggle('decayed-active', currentTheme === 'decayed');
+                themeBtn.textContent = currentTheme === 'decayed' ? 'Default' : 'Decayed';
+            }
+
+            function postThemeToGame() {
+                if (!frame.contentWindow) return;
+                frame.contentWindow.postMessage(
+                    { type: 'rev-reactor-theme-set', theme: currentTheme },
+                    '*'
+                );
+            }
+
+            function readSavedGame() {
+                try {
+                    return localStorage.getItem(SAVE_KEY);
+                } catch (_err) {
+                    return null;
+                }
+            }
+
+            function writeSavedGame(saveText) {
+                if (typeof saveText !== 'string') return;
+                try {
+                    localStorage.setItem(SAVE_KEY, saveText);
+                } catch (err) {
+                    console.warn('Failed to write save data from iframe:', err);
+                }
+            }
+
+            function triggerDownload(filename, text) {
+                const safeName = typeof filename === 'string' && filename.trim()
+                    ? filename.trim()
+                    : 'rev_reactor_save.txt';
+                const payload = typeof text === 'string' ? text : String(text ?? '');
+                const blob = new Blob([payload], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = safeName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function postHostStateToGame() {
+                if (!frame.contentWindow) return;
+                frame.contentWindow.postMessage(
+                    {
+                        type: 'rev-reactor-host-state',
+                        theme: currentTheme,
+                        saveText: readSavedGame(),
+                    },
+                    '*'
+                );
+            }
+
+            function setTheme(theme) {
+                currentTheme = theme === 'decayed' ? 'decayed' : 'default';
+                localStorage.setItem('sprite-theme', currentTheme);
+                applyThemeButton();
+                postThemeToGame();
+            }
+
+            function restartFrame(reason) {
+                const baseSrc = frame.dataset.baseSrc || 'game.html';
+                const url = new URL(baseSrc, window.location.href);
+                url.searchParams.set('watchdog', Date.now().toString(36));
+                frame.src = `${url.pathname}${url.search}${url.hash}`;
+
+                restartCount += 1;
+                hasBeat = false;
+                frameLoadAt = Date.now();
+                lastBeat = frameLoadAt;
+                setStatus(`Game restarted (${reason}). Count: ${restartCount}`);
+            }
+
+            window.addEventListener('message', (ev) => {
+                if (ev.source !== frame.contentWindow) return;
+                const data = ev.data;
+                if (!data || typeof data !== 'object') return;
+                if (data.type === 'rev-reactor-beat') {
+                    lastBeat = Date.now();
+                    hasBeat = true;
+                    if (statusEl && statusEl.textContent) {
+                        setStatus('');
+                    }
+                    return;
+                }
+
+                if (data.type === 'rev-reactor-host-state-request') {
+                    postHostStateToGame();
+                    return;
+                }
+
+                if (data.type === 'rev-reactor-save-write') {
+                    writeSavedGame(data.saveText);
+                    return;
+                }
+
+                if (data.type === 'rev-reactor-download') {
+                    try {
+                        triggerDownload(data.filename, data.text);
+                    } catch (err) {
+                        console.warn('Failed to download save data from iframe:', err);
+                    }
+                }
+            });
+
+            frame.addEventListener('load', () => {
+                frameLoadAt = Date.now();
+                lastBeat = frameLoadAt;
+                hasBeat = false;
+                postHostStateToGame();
+                postThemeToGame();
+            });
+            
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Tab is going to background
+                    wasBackgrounded = true;
+                } else {
+                    // Tab is coming back to foreground
+                    lastVisibilityChange = Date.now();
+                    wasBackgrounded = false;
+                    // Reset the beat timer to give the frame grace period to send heartbeat
+                    lastBeat = Date.now();
+                }
+            });
+
+            if (themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    setTheme(currentTheme === 'decayed' ? 'default' : 'decayed');
+                });
+            }
+
+            setInterval(() => {
+                if (document.hidden) return;
+
+                const now = Date.now();
+                if (!hasBeat) {
+                    if (now - frameLoadAt > FIRST_BEAT_GRACE_MS) {
+                        restartFrame('no heartbeat during startup');
+                    }
+                    return;
+                }
+
+                // Don't restart on heartbeat timeout if tab just returned from background
+                const timeSinceTabVisible = now - lastVisibilityChange;
+                if (timeSinceTabVisible < HEARTBEAT_TIMEOUT_MS) {
+                    return;  // Skip restart check for first 6 seconds after tab returns
+                }
+
+                if (now - lastBeat > HEARTBEAT_TIMEOUT_MS) {
+                    restartFrame('heartbeat timeout');
+                }
+            }, CHECK_EVERY_MS);
+
+            applyThemeButton();
+            postThemeToGame();
+        })();
+    </script>
+</body>
+</html>

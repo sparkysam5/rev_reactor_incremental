@@ -106,7 +106,7 @@ class Ui:
         heat_label = (
             f"{format_number_with_suffix(sim.reactor_heat, max_decimals=0)}/"
             f"{format_number_with_suffix(sim.max_reactor_heat, max_decimals=0)} "
-            f"({heat_sign}{format_number_with_suffix(heat_delta, min_decimals=3)}/t)"
+            f"({heat_sign}{format_number_with_suffix(heat_delta, min_decimals=1)}/t)"
         )
         heat_max_w = layout.heat_bar_x + layout.bar_width - text_x - 4
         heat_font = _fit_font_size(heat_label, heat_max_w, 16)
@@ -141,7 +141,7 @@ class Ui:
         power_label = (
             f"{format_number_with_suffix(sim.stored_power, max_decimals=0)}/"
             f"{format_number_with_suffix(sim.max_reactor_power, max_decimals=0)} "
-            f"({power_sign}{format_number_with_suffix(power_delta, min_decimals=3)}/t)"
+            f"({power_sign}{format_number_with_suffix(power_delta, min_decimals=0)}/t)"
         )
         power_max_w = layout.power_bar_x + layout.bar_width - text_x - 4
         power_font = _fit_font_size(power_label, power_max_w, 16)
@@ -548,7 +548,7 @@ class Ui:
             if can_buy:
                 tint = Color(255, 255, 255, 255)
             else:
-                tint = Color(160, 160, 160, 255)
+                tint = Color(55, 55, 55, 255)
 
             if tex is not None:
                 draw_texture_ex(tex, Vector2(x, y), 0.0, 1.0, tint)
@@ -583,7 +583,7 @@ class Ui:
                 if cat_tex is not None:
                     cx = x + cell_w - cat_tex.width - 2
                     cy = y + cell_h - cat_tex.height - 2
-                    draw_texture_ex(cat_tex, Vector2(cx, cy), 0.0, 1.0, Color(255, 255, 255, 255))
+                    draw_texture_ex(cat_tex, Vector2(cx, cy), 0.0, 1.0, tint)
 
             # Level indicator (bottom-left corner, above category overlay)
             if u.level > 0:
@@ -1179,13 +1179,15 @@ def _build_help_content(content_w: int) -> tuple[list, float]:
     _header("Controls")
     _text(
         "Left-click a shop item to select it (green highlight), then "
-        "left-click on the reactor grid to place it. Right-click a "
-        "placed component to sell it."
+        "left-click on the reactor grid to place it. Placing on an " 
+        "occupied cell auto-sells the old component and places the " 
+        "new one. Right-click a placed component to sell it."
     )
+    _divider()
     _text(
-        "Replace mode (top-right toggle): placing on an occupied cell "
-        "auto-sells the old component and places the new one."
+        "Perpetual mode (top-right toggle): Automatically replace used cells (requires associated upgrade)"
     )
+    _divider()
     _text(
         "Middle-click drag or scroll wheel to pan the grid. "
         "Press Space to pause/unpause the simulation."

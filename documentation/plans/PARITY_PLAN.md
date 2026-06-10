@@ -1,0 +1,18 @@
+- [ ] Shift left click and Shift right click
+- [ ] Text Alignment
+- [ ] Power / Heat icons covering indicator bars
+- [x] Background cell colour
+- [ ] Options Screen missing textures
+- [ ] Formula display in help menu
+- [ ] EP Formula not listed
+- [ ] Text screens have slightly wrong colour
+- [ ] Prestige text needs reformatting to be neater
+- [ ] Upgrade Colours
+- [x] Decrease brightness more for out of budget upgrades
+- [ ] Text overflow on viewing money + EP on prestige page
+- [x] "Replace mode" described incorrectly
+- [ ] Plus/Energy/Infinity Icons in upgrade screen incorrect
+- [ ] All Left UI texts needs shifting down slightly
+- [x] Doesn't display passive heat reduction on 0 heat
+- [x] Heat should be 1 decimal, power should be 0 decimals
+- [x] Stop reloading after refocusing inactive tab
