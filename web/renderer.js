@@ -5,14 +5,15 @@
  * as Canvas2D calls.  One FFI call per frame instead of ~300.
  *
  * Opcodes:
- *   0  CLEAR_BG        r,g,b,a                          (5 values)
- *   1  FILL_RECT        x,y,w,h,r,g,b,a                 (9 values)
- *   2  STROKE_RECT      x,y,w,h,r,g,b,a                 (9 values)
+ *   0  CLEAR_BG          r,g,b,a                          (5 values)
+ *   1  FILL_RECT         x,y,w,h,r,g,b,a                 (9 values)
+ *   2  STROKE_RECT       x,y,w,h,r,g,b,a                 (9 values)
  *   3  DRAW_TEXT         strIdx,x,y,size,r,g,b,a         (9 values)
  *   4  TEXTURE_PRO       texId,sx,sy,sw,sh,dx,dy,dw,dh,r,g,b,a  (14 values)
  *   5  TEXTURE_EX        texId,x,y,rot,scale,r,g,b,a    (10 values)
  *   6  BEGIN_SCISSOR     x,y,w,h                         (5 values)
  *   7  END_SCISSOR       (none)                           (1 value)
+ *   8  DRAW_TEXT_LIGHT   strIdx,x,y,size,r,g,b,a         (9 values)
  */
 
 globalThis.Renderer = (() => {
@@ -109,9 +110,9 @@ globalThis.Renderer = (() => {
         return s;
     }
 
-    function getFont(size) {
+    function getFont(size, weight=400) {
         const s = size | 0;
-        let f = _fontCache.get(s);
+        let f = _fontCache.get(`${s}-${weight}`);
         if (f === undefined) {
             f = `400 ${s}px "JetBrains Mono", "Consolas", "Courier New", monospace`;
             _fontCache.set(s, f);
@@ -278,6 +279,17 @@ globalThis.Renderer = (() => {
                 }
                 case 7: { // END_SCISSOR
                     ctx.restore();
+                    break;
+                }
+                case 8: { // DRAW_TEXT_LIGHT: strIdx,x,y,size,r,g,b,a
+                    const strIdx = cmds[i++] | 0;
+                    const x = cmds[i++], y = cmds[i++], size = cmds[i++];
+                    const r = cmds[i++], g = cmds[i++], b = cmds[i++], a = cmds[i++];
+                    ctx.font = getFont(size, 200);
+                    ctx.fillStyle = rgba(r, g, b, a);
+                    ctx.textBaseline = 'top';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(strings[strIdx] || '', x, y);
                     break;
                 }
                 default:

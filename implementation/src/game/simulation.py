@@ -1038,6 +1038,7 @@ class Simulation:
                 u.level = 0
         self.store.exotic_particles = self.store.total_exotic_particles
         self.prestige_can_refund = False
+        self.recompute_max_capacities()
 
     def resize_grid_for_subspace(self, base_width: int = 19, base_height: int = 16) -> None:
         """Resize grid based on Subspace Expansion (upgrade 50) level.

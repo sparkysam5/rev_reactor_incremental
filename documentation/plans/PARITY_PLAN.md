@@ -1,19 +1,23 @@
 - [x] Shift left click and Shift right click
-- [ ] Text Alignment
+- [x] Text Alignment
 - [x] Power / Heat icons covering indicator bars
-- [ ] Improve power/heat icon alignment
+- [x] Improve power/heat icon alignment
 - [x] Background cell colour
 - [ ] Options Screen missing textures
 - [ ] Formula display in help menu
 - [ ] EP Formula not listed
 - [x] Upgrade screen has wrong colour
-- [ ] Prestige text needs reformatting to be neater
+- [x] Prestige text needs reformatting to be neater
 - [ ] Upgrade Colours
 - [x] Decrease brightness more for out of budget upgrades
-- [ ] Text overflow on viewing money + EP on prestige page
+- [x] Text overflow on viewing money + EP on prestige page
 - [x] "Replace mode" described incorrectly
 - [ ] Plus/Energy/Infinity Icons in upgrade screen incorrect
-- [ ] All Left UI texts needs shifting down slightly
+- [x] All Left UI texts needs shifting down slightly
 - [x] Doesn't display passive heat reduction on 0 heat
 - [x] Heat should be 1 decimal, power should be 0 decimals
 - [x] Stop reloading after refocusing inactive tab
+- [x] Text moves down when button pressed
+- [x] Back button only triggers on release (prevents accidental placements)
+- [x] Fixed upgrade ordering issue with importing and exporting old saves (REORDERS non-prestige upgrades for any recent new scheme saves)
+- [ ] Fixed importing a prestiged save file locking prestige tab

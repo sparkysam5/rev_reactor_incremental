@@ -67,6 +67,7 @@ if not _WEB:
         "get_mouse_position": "GetMousePosition",
         "is_mouse_button_pressed": "IsMouseButtonPressed",
         "is_mouse_button_down": "IsMouseButtonDown",
+        "is_mouse_button_released": "isMouseButtonReleased",
         "measure_text": "MeasureText",
         "get_time": "GetTime",
         "take_screenshot": "TakeScreenshot",
@@ -147,6 +148,7 @@ else:
     OP_TEXTURE_EX = 5
     OP_BEGIN_SCISSOR = 6
     OP_END_SCISSOR = 7
+    OP_DRAW_TEXT_LIGHT = 8
 
     # ── Command buffer (module-level, reused across frames) ───────────
     # Use array.array('d') directly so to_js can use the buffer protocol
@@ -289,10 +291,11 @@ else:
 
     # ── Text ─────────────────────────────────────────────────────────
 
-    def draw_text(text: str, x: int, y: int, size: int, color: tuple) -> None:
+    def draw_text(text: str, x: int, y: int, size: int, color: tuple, light=False) -> None:
         str_idx = len(_strings)
         _strings.append(str(text))
-        _cmds.extend((OP_DRAW_TEXT, float(str_idx), float(x), float(y), float(size),
+        opcode = OP_DRAW_TEXT_LIGHT if light else OP_DRAW_TEXT
+        _cmds.extend((opcode, float(str_idx), float(x), float(y), float(size),
                        color[0], color[1], color[2], color[3]))
 
     _measure_cache: dict[tuple, int] = {}

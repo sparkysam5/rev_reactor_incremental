@@ -807,24 +807,24 @@ def _build_catalog_from_types(
                     comp.description = f"Acts as two {element.lower()} " + text_templates["fuel_large_a"]
                 else:
                     comp.description = tier_prefix + text_templates.get("fuel_base", "")
-                # RE: stringliteral.json — element-specific mechanic descriptions for experimental fuels.
-                # The special description is stored at ExperimentalFuelElement+0x10 and appended
-                # to the base description at display time.
-                _EXPERIMENTAL_DESCS = {
-                    7: ("After burning up completely, it releases a special form of "
-                        "radiation that permanently increases the power output of "
-                        "other protium cells by 1% per depleted cell."),
-                    8: ("Its base power output drops by 2% for each other component "
-                        "in the 7 x 7 area surrounding it."),
-                    9: ("It gradually cycles between producing only heat and "
-                        "producing only power."),
-                    10: "Each cell produces four pulses per tick instead of the usual one.",
-                    11: ("All components aligned vertically or horizontally are "
-                         "considered adjacent to it."),
-                }
-                extra = _EXPERIMENTAL_DESCS.get(fuel_idx)
-                if extra:
-                    comp.description += " " + extra
+                    # RE: stringliteral.json — element-specific mechanic descriptions for experimental fuels.
+                    # The special description is stored at ExperimentalFuelElement+0x10 and appended
+                    # to the base description at display time.
+                    _EXPERIMENTAL_DESCS = {
+                        7: ("After burning up completely, it releases a special form of "
+                            "radiation that permanently increases the power output of "
+                            "other protium cells by 1% per depleted cell."),
+                        8: ("Its base power output drops by 2% for each other component "
+                            "in the 7 x 7 area surrounding it."),
+                        9: ("It gradually cycles between producing only heat and "
+                            "producing only power."),
+                        10: "Each cell produces four pulses per tick instead of the usual one.",
+                        11: ("All components aligned vertically or horizontally are "
+                            "considered adjacent to it."),
+                    }
+                    extra = _EXPERIMENTAL_DESCS.get(fuel_idx)
+                    if extra:
+                        comp.description += " " + extra
             else:
                 base_tier = _parse_tiered_component(comp.name)
                 if base_tier:

@@ -95,8 +95,8 @@ class Ui:
             Color(240, 80, 80, 200),
         )
         # Heat icon + label
-        icon_x = layout.heat_bar_x + 2
-        icon_y = layout.heat_bar_y + 2
+        icon_x = layout.heat_bar_x + 4
+        icon_y = layout.heat_bar_y + 5
         text_x = icon_x
         if self.heat_icon is not None:
             draw_texture_ex(self.heat_icon, Vector2(icon_x, icon_y), 0.0, 1.0, Color(255, 255, 255, 255))
@@ -104,7 +104,7 @@ class Ui:
         heat_delta = sim.last_heat_change
         heat_sign = "+" if heat_delta >= 0 else ""
         heat_label = (
-            f"{format_number_with_suffix(sim.reactor_heat, max_decimals=3)}/"
+            f"{format_number_with_suffix(sim.reactor_heat, max_decimals=3, min_decimals=3) if sim.reactor_heat else '0'}/"
             f"{format_number_with_suffix(sim.max_reactor_heat, max_decimals=3)} "
             f"({heat_sign}{format_number_with_suffix(heat_delta, min_decimals=1)}/t)"
         )
@@ -113,9 +113,9 @@ class Ui:
         draw_text(
             heat_label,
             text_x,
-            layout.heat_bar_y + 6,
+            layout.heat_bar_y + 8,
             heat_font,
-            Color(240, 80, 80, 255),
+            Color(220, 220, 220, 255),
         )
 
         # Power bar (RE: fill = stored_power / maxPower, clamped 0..1)
@@ -130,8 +130,8 @@ class Ui:
             Color(80, 200, 255, 200),
         )
         # Power icon + label
-        icon_x = layout.power_bar_x + 2
-        icon_y = layout.power_bar_y + 2
+        icon_x = layout.power_bar_x + 4
+        icon_y = layout.power_bar_y + 5
         text_x = icon_x
         if self.power_icon is not None:
             draw_texture_ex(self.power_icon, Vector2(icon_x, icon_y), 0.0, 1.0, Color(255, 255, 255, 255))
@@ -139,8 +139,8 @@ class Ui:
         power_delta = sim.last_power_change
         power_sign = "+" if power_delta >= 0 else ""
         power_label = (
-            f"{format_number_with_suffix(sim.stored_power, max_decimals=0)}/"
-            f"{format_number_with_suffix(sim.max_reactor_power, max_decimals=0)} "
+            f"{format_number_with_suffix(sim.stored_power, max_decimals=3, isInteger=True)}/"
+            f"{format_number_with_suffix(sim.max_reactor_power, max_decimals=3, isInteger=True)} "
             f"({power_sign}{format_number_with_suffix(power_delta, min_decimals=0)}/t)"
         )
         power_max_w = layout.power_bar_x + layout.bar_width - text_x - 4
@@ -148,9 +148,9 @@ class Ui:
         draw_text(
             power_label,
             text_x,
-            layout.power_bar_y + 6,
+            layout.power_bar_y + 8,
             power_font,
-            Color(80, 200, 255, 255),
+            Color(220, 220, 220, 255),
         )
 
         # Cash display (with EP in upgrade/prestige views)
@@ -162,13 +162,13 @@ class Ui:
             )
         else:
             money_text = f"${format_number_with_suffix(sim.store.money)}"
-        font_size = _fit_font_size(money_text, layout.cash_w - 4, 16)
+        font_size = _fit_font_size(money_text, layout.cash_w - 12, 16)
         text_width = _measure(money_text, font_size)
         money_x = layout.cash_x + max(0, (layout.cash_w - text_width) // 2)
         draw_text(
             money_text,
             money_x,
-            layout.cash_y + 6,
+            layout.cash_y + 10,
             font_size,
             Color(230, 230, 230, 255),
         )
@@ -198,8 +198,9 @@ class Ui:
         vent_font = _fit_font_size(label, btn_text_w, 14, min_size=9)
         vent_text_w = _measure(label, vent_font)
         tx = bx + max(0, (btn_w - vent_text_w) // 2)
-        ty = by + max(0, (btn_h - vent_font) // 2) - 1
-        draw_text(label, tx, ty, vent_font, Color(240, 240, 240, 255))
+        ty = by + max(0, (btn_h - vent_font) // 2) 
+        if pressed_vent and self.button_pressed is not None: ty += 2
+        draw_text(label, tx, ty, vent_font, Color(220, 220, 220, 255))
 
         # Sell All Power / Scrounge button
         # RE: "Sell All Power: +{power} $ (+{autoSellRate} $ per tick)"
@@ -230,8 +231,9 @@ class Ui:
         sell_font = _fit_font_size(label, btn_text_w, 14, min_size=9)
         sell_text_w = _measure(label, sell_font)
         tx = bx + max(0, (btn_w - sell_text_w) // 2)
-        ty = by + max(0, (btn_h - sell_font) // 2) - 1
-        draw_text(label, tx, ty, sell_font, Color(240, 240, 240, 255))
+        ty = by + max(0, (btn_h - sell_font) // 2) 
+        if pressed_sell and self.button_pressed is not None: ty += 2
+        draw_text(label, tx, ty, sell_font, Color(220, 220, 220, 255))
 
         # Stats panel is hidden until we wire the real stats page UI.
         new_selected, hovered = self.draw_store(sim, layout, mouse_x, mouse_y, mouse_pressed)
@@ -269,11 +271,13 @@ class Ui:
                 selected = idx == sim.shop_page
                 locked = sim.shop_page_locked(idx)
                 tex = base
-                if selected and pressed is not None and not locked:
+                if locked:
+                    tex = self.store_block
+                elif selected and pressed is not None:
                     tex = pressed
-                elif hovered and hover is not None and not locked:
+                elif hovered and hover is not None:
                     tex = hover
-                tint = Color(160, 160, 160, 255) if locked else Color(255, 255, 255, 255)
+                tint = Color(255, 255, 255, 255)
                 draw_texture_ex(tex, Vector2(x, y), 0.0, 1.0, tint)
                 if hovered and mouse_pressed and not locked:
                     if sim.shop_page != idx:
@@ -366,9 +370,9 @@ class Ui:
         panel_y = layout.top_panel_y
         panel_w = layout.top_panel_w
         panel_h = layout.top_panel_h
-        margin = 14
-        font_sm = 12
-        font_title = 14
+        margin = 20
+        font_sm = 10
+        font_title = 16
 
         # Banner background is always drawn
         if self.top_banner is not None:
@@ -395,7 +399,7 @@ class Ui:
         )
 
         # ── Slot 5: Power Per Tick — top-left ──
-        top_row_y = panel_y + 12
+        top_row_y = panel_y + 20
         if has_per_tick:
             ppt = f"Power Per Tick: {format_number_with_suffix(placed.last_power)}"
             draw_text(ppt, panel_x + margin, top_row_y, font_sm, text_color)
@@ -416,7 +420,7 @@ class Ui:
         usable_w = right_edge - panel_x - margin
         title_w = _measure(title, font_title)
         title_x = panel_x + max(0, (usable_w - title_w) // 2 + margin)
-        title_y = panel_y + 12
+        title_y = panel_y + 20
         draw_text(title, title_x, title_y, font_title, text_color)
 
         # ── Slot 1: Description — centered, wrapped, below title ──
@@ -426,11 +430,11 @@ class Ui:
         # Usable width stops before the pause/replace buttons
         desc_max_w = right_edge - panel_x - margin
         desc_lines = _wrap_text(description, desc_max_w, font_sm) if description else []
-        y = title_y + 20
+        y = panel_y + (40 + panel_h - margin - 14*len(desc_lines)) // 2
         for line in desc_lines:
             line_w = _measure(line, font_sm)
             line_x = panel_x + max(0, (desc_max_w - line_w) // 2 + margin)
-            draw_text(line, line_x, y, font_sm, text_color)
+            draw_text(line, line_x, y, font_sm, text_color, light = True)
             y += 14
 
         # Throughput warning: outlets are the bottleneck relative to vent capacity.
@@ -461,7 +465,7 @@ class Ui:
         else:
             slot2_text = _format_cost_line(comp, sim.get_component_cost(comp))
         if slot2_text:
-            draw_text(slot2_text, panel_x + margin, panel_y + panel_h - 20, font_sm, text_color)
+            draw_text(slot2_text, panel_x + margin, panel_y + panel_h - margin, font_sm, text_color)
 
         # ── Slot 3: Heat OR Durability — bottom-right ──
         # Only shown for non-depleted grid components (RE: line 388719)
@@ -581,9 +585,21 @@ class Ui:
                 # Category overlay in bottom-right corner
                 cat_tex = sprites.get(u.category)
                 if cat_tex is not None:
+                    if u.level < 7:
+                        cat_tint = [
+                            (255, 255, 255, 255),
+                            (0, 255, 0, 255),
+                            (255, 182, 53, 255),
+                            (255, 182, 53, 255),
+                            (153, 153, 153, 255),
+                            (241, 227, 44, 255),
+                            (160, 255, 250, 255)
+                        ][u.level]
+                    else:
+                        cat_tint = (121, 0, 188, 255)
                     cx = x + cell_w - cat_tex.width - 2
                     cy = y + cell_h - cat_tex.height - 2
-                    draw_texture_ex(cat_tex, Vector2(cx, cy), 0.0, 1.0, tint)
+                    draw_texture_ex(cat_tex, Vector2(cx, cy), 0.0, 1.0, cat_tint)
 
             # Level indicator (bottom-left corner, above category overlay)
             if u.level > 0:
@@ -619,9 +635,9 @@ class Ui:
         panel_y = layout.top_panel_y
         panel_w = layout.top_panel_w
         panel_h = layout.top_panel_h
-        margin = 14
-        font_sm = 12
-        font_title = 14
+        margin = 20
+        font_sm = 10
+        font_title = 16
 
         # Banner background — always drawn so the panel area isn't empty
         if self.top_banner is not None:
@@ -647,15 +663,15 @@ class Ui:
             title = f"{title} (Lv. {u.level})"
         title_w = _measure(title, font_title)
         title_x = panel_x + max(0, (usable_w - title_w) // 2 + margin)
-        draw_text(title, title_x, panel_y + 8, font_title, text_color)
+        draw_text(title, title_x, panel_y + 20, font_title, text_color)
 
         # Description
         desc_lines = _wrap_text(u.description, usable_w, font_sm)
-        y = panel_y + 26
+        y = panel_y + (40 + panel_h - margin - 14*len(desc_lines)) // 2
         for line in desc_lines:
             line_w = _measure(line, font_sm)
             line_x = panel_x + max(0, (usable_w - line_w) // 2 + margin)
-            draw_text(line, line_x, y, font_sm, text_color)
+            draw_text(line, line_x, y, font_sm, text_color, light=True)
             y += 14
 
         # Cost line (bottom-left)
@@ -666,7 +682,7 @@ class Ui:
             cost = mgr.get_cost(u.index)
             currency = "EP" if u.is_prestige else "$"
             cost_text = f"Cost: {format_number_with_suffix(cost)} {currency}"
-        draw_text(cost_text, panel_x + margin, panel_y + panel_h - 20, font_sm, text_color)
+        draw_text(cost_text, panel_x + margin, panel_y + panel_h - margin, font_sm, text_color)
 
     def draw_statistics_panel(self, sim: Simulation, layout: Layout) -> None:
         """Draw the Statistics panel in the grid content area."""
@@ -748,7 +764,7 @@ class Ui:
         panel_y = layout.top_panel_y
         panel_w = layout.top_panel_w
         panel_h = layout.top_panel_h
-        text_color = Color(230, 230, 230, 255)
+        text_color = Color(220, 220, 220, 255)
 
         if self.top_banner is not None:
             draw_texture_ex(
@@ -757,6 +773,30 @@ class Ui:
                 0.0, 1.0,
                 Color(255, 255, 255, 255),
             )
+
+        def draw_button_label(label: str, x: int, y: int, base_size: int, min_size: int = 8, pressed: bool = False) -> None:
+            w, h = btn_med.width, btn_med.height
+            hover_upgrades = (layout.main_upgrades_x <= mx <= layout.main_upgrades_x + uw and
+                              layout.main_upgrades_y <= my <= layout.main_upgrades_y + uh)
+            upg_tex = btn_med_pressed if sim.view_mode == "upgrades" else (btn_med_hover if hover_upgrades else btn_med)
+            draw_texture_pro(
+                upg_tex,
+                Rectangle(0, 0, upg_tex.width, upg_tex.height),
+                Rectangle(layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height),
+                Vector2(0, 0),
+                0.0,
+                Color(255, 255, 255, 255),
+            )
+
+            fs = base_size
+            max_w = max(8, w - 10)
+            while fs > min_size and measure_text(label, fs) > max_w:
+                fs -= 1
+            tw = measure_text(label, fs)
+            tx = x + max(0, (w - tw) // 2)
+            ty = y + max(0, (h - fs) // 2)
+            if pressed: ty += 2
+            draw_text(label, tx, ty, fs, Color(220, 220, 220, 255))
 
         content_x = layout.upgrade_grid_x
         content_y = layout.upgrade_grid_y + 4
@@ -823,7 +863,7 @@ class Ui:
             "In exchange, you'll get exotic particles, which will let you get powerful, permanent "
             "upgrades. It is recommended you wait until you can get 51 particles before your first prestige."
         )
-        desc_lines = _wrap_text(desc, content_w, font_sm)
+        desc_lines = _wrap_text(desc, content_w * 0.8, font_sm)
         for line in desc_lines:
             lw = _measure(line, font_sm)
             draw_text(line, content_x + (content_w - lw) // 2, y, font_sm, text_color)
@@ -1516,8 +1556,8 @@ _UPGRADE_GRID_POSITIONS: dict[int, tuple[int, int]] = {
     0: (0, 0), 1: (0, 1), 2: (0, 2), 3: (0, 3), 4: (0, 4), 5: (0, 5),
     6: (0, 6), 7: (0, 7), 8: (0, 8), 9: (0, 9), 10: (0, 10), 11: (0, 11),
     # Row 1: Perpetual fuel (cols 0-5) + infrastructure in display order (cols 6-11)
-    12: (1, 0), 13: (1, 1), 14: (1, 2), 15: (1, 3), 16: (1, 4), 17: (1, 5),
-    22: (1, 6), 24: (1, 7), 18: (1, 8), 20: (1, 9), 21: (1, 10), 19: (1, 11),
+    16: (1, 0), 17: (1, 1), 18: (1, 2), 19: (1, 3), 20: (1, 4), 21: (1, 5),
+    22: (1, 6), 24: (1, 7), 12: (1, 8), 14: (1, 9), 15: (1, 10), 13: (1, 11),
     # Row 3: Vents group + Coolant (gap at col 3)
     25: (3, 0), 26: (3, 1), 27: (3, 2), 23: (3, 4),
     # Row 5: Exchangers group + Reflectors (gap at col 3)
@@ -1700,7 +1740,7 @@ def _format_sell_line(placed: ReactorComponent) -> str:
 
 
 
-def format_number_with_suffix(value: float, max_decimals: int = 3, min_decimals: int = 0) -> str:
+def format_number_with_suffix(value: float, max_decimals: int = 3, min_decimals: int = 0, isInteger: bool = False) -> str:
     zero = "0." + "0" * min_decimals if min_decimals > 0 else "0"
     if not math.isfinite(value):
         return zero
@@ -1749,7 +1789,10 @@ def format_number_with_suffix(value: float, max_decimals: int = 3, min_decimals:
         group += 1
         scale *= 1000
         scaled = value / scale
-    decimals = max(0, min(4, max_decimals))
+    if isInteger and group == 0:
+        decimals = 0
+    else:
+        decimals = max(0, min(4, max_decimals))
 
     out = f"{scaled:.{decimals}f}"
     if "." in out:

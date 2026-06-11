@@ -33,6 +33,7 @@ from raylib_compat import (
     init_window,
     is_mouse_button_down,
     is_mouse_button_pressed,
+    is_mouse_button_released,
     load_texture,
     measure_text,
     MOUSE_BUTTON_LEFT,
@@ -439,7 +440,7 @@ async def main() -> None:
             bkw, bkh = btn_back.width, btn_back.height
             hover_back = (layout.back_x <= mx <= layout.back_x + bkw and
                           layout.back_y <= my <= layout.back_y + bkh)
-            if hover_back and is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+            if hover_back and is_mouse_button_released(MOUSE_BUTTON_LEFT):
                 sim.view_mode = "reactor"
 
             # ── Bottom buttons: Options / Statistics / Help ───────────
@@ -600,20 +601,20 @@ async def main() -> None:
             backer_x = frame_x + layout.grid_backer_offset_x
             backer_y = frame_y + layout.grid_backer_offset_y
 
-            if sim.view_mode != "upgrades":
+            if sim.view_mode == "upgrades" or sim.view_mode == "prestige":
                 draw_texture_pro(
-                    grid_backer,
-                    Rectangle(0, 0, grid_backer.width, grid_backer.height),
-                    Rectangle(backer_x, backer_y, grid_backer.width, grid_backer.height),
+                    main_upgrades,
+                    Rectangle(0, 0, main_upgrades.width, main_upgrades.height),
+                    Rectangle(frame_x, frame_y, main_upgrades.width, main_upgrades.height),
                     Vector2(0, 0),
                     0.0,
                     Color(255, 255, 255, 255),
                 )
             else:
                 draw_texture_pro(
-                    main_upgrades,
-                    Rectangle(0, 0, main_upgrades.width, main_upgrades.height),
-                    Rectangle(frame_x, frame_y, main_upgrades.width, main_upgrades.height),
+                    grid_backer,
+                    Rectangle(0, 0, grid_backer.width, grid_backer.height),
+                    Rectangle(backer_x, backer_y, grid_backer.width, grid_backer.height),
                     Vector2(0, 0),
                     0.0,
                     Color(255, 255, 255, 255),
@@ -788,15 +789,16 @@ async def main() -> None:
             if sim.view_mode == "reactor" and sim.grid is not None:
                 sim.grid.draw_scrollbars()
 
-            def draw_button_label(label: str, x: int, y: int, w: int, h: int, base_size: int, min_size: int = 8) -> None:
+            def draw_button_label(label: str, x: int, y: int, w: int, h: int, base_size: int, min_size: int = 8, pressed: bool = False) -> None:
                 fs = base_size
                 max_w = max(8, w - 10)
                 while fs > min_size and measure_text(label, fs) > max_w:
                     fs -= 1
                 tw = measure_text(label, fs)
                 tx = x + max(0, (w - tw) // 2)
-                ty = y + max(0, (h - fs) // 2) - 1
-                draw_text(label, tx, ty, fs, Color(230, 230, 230, 255))
+                ty = y + max(0, (h - fs) // 2)
+                if pressed: ty += 2
+                draw_text(label, tx, ty, fs, Color(220, 220, 220, 255))
 
             # Top-left upgrade tabs
             upg_tex = btn_med_pressed if sim.view_mode == "upgrades" else (btn_med_hover if hover_upgrades else btn_med)
@@ -808,7 +810,7 @@ async def main() -> None:
                 0.0,
                 Color(255, 255, 255, 255),
             )
-            draw_button_label("Upgrades", layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height, 13, 10)
+            draw_button_label("Upgrades", layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height, 13, 10, sim.view_mode == "upgrades")
             prs_tex = btn_med_pressed if sim.view_mode == "prestige" else (btn_med_hover if hover_prestige else btn_med)
             draw_texture_pro(
                 prs_tex,
@@ -818,7 +820,7 @@ async def main() -> None:
                 0.0,
                 Color(255, 255, 255, 255),
             )
-            draw_button_label("Prestige", layout.prestige_upgrades_x, layout.prestige_upgrades_y, prs_tex.width, prs_tex.height, 13, 10)
+            draw_button_label("Prestige", layout.prestige_upgrades_x, layout.prestige_upgrades_y, prs_tex.width, prs_tex.height, 13, 10, sim.view_mode == "prestige")
 
             # Bottom buttons (Options / Statistics / Help)
             opt_tex = btn_small_pressed if sim.view_mode == "options" else (btn_small_hover if hover_options else btn_small)
@@ -830,7 +832,7 @@ async def main() -> None:
                 0.0,
                 Color(255, 255, 255, 255),
             )
-            draw_button_label("Options", layout.options_x, layout.options_y, opt_tex.width, opt_tex.height, 10, 8)
+            draw_button_label("Options", layout.options_x, layout.options_y, opt_tex.width, opt_tex.height, 10, 8, sim.view_mode == "options")
             stats_tex = btn_small_pressed if sim.view_mode == "statistics" else (btn_small_hover if hover_stats else btn_small)
             draw_texture_pro(
                 stats_tex,
@@ -840,7 +842,7 @@ async def main() -> None:
                 0.0,
                 Color(255, 255, 255, 255),
             )
-            draw_button_label("Statistics", layout.stats_x_btn, layout.stats_y_btn, stats_tex.width, stats_tex.height, 10, 8)
+            draw_button_label("Statistics", layout.stats_x_btn, layout.stats_y_btn, stats_tex.width, stats_tex.height, 10, 8, sim.view_mode == "statistics")
             help_tex = btn_small_pressed if sim.view_mode == "help" else (btn_small_hover if hover_help else btn_small)
             draw_texture_pro(
                 help_tex,
@@ -850,11 +852,12 @@ async def main() -> None:
                 0.0,
                 Color(255, 255, 255, 255),
             )
-            draw_button_label("Help", layout.help_x, layout.help_y, help_tex.width, help_tex.height, 10, 8)
+            draw_button_label("Help", layout.help_x, layout.help_y, help_tex.width, help_tex.height, 10, 8, sim.view_mode == "help")
 
             # Back button (visible only when in upgrade/prestige view)
             if sim.view_mode != "reactor":
-                back_tex = btn_back_pressed if (hover_back and is_mouse_button_down(MOUSE_BUTTON_LEFT)) else (btn_back_hover if hover_back else btn_back)
+                btn_pressed = hover_back and is_mouse_button_down(MOUSE_BUTTON_LEFT)
+                back_tex = btn_back_pressed if btn_pressed else (btn_back_hover if hover_back else btn_back)
                 draw_texture_pro(
                     back_tex,
                     Rectangle(0, 0, back_tex.width, back_tex.height),
@@ -863,9 +866,11 @@ async def main() -> None:
                     0.0,
                     Color(255, 255, 255, 255),
                 )
-                # ButtonBACK is 96x46; arrow takes ~28px on left, center text in remaining area
-                back_text_x = layout.back_x + 28 + (96 - 28 - measure_text("Back", 14)) // 2
-                draw_text("Back", back_text_x, layout.back_y + 16, 14, Color(230, 230, 230, 255))
+                # ButtonBACK is 96x46; arrow takes ~20px on left, center text in remaining area
+                back_text_x = layout.back_x + 20 + (96 - 20 - measure_text("Back", 14)) // 2
+                ty = layout.back_y + 16
+                if btn_pressed: ty += 2
+                draw_text("Back", back_text_x, ty, 14, Color(220, 220, 220, 255))
 
             # Grid hover (fallback — shop hover in ui.draw() will override)
             sim.hover_component = None
