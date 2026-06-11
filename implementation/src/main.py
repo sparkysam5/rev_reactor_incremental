@@ -499,9 +499,19 @@ async def main() -> None:
                         if existing is None:
                             # Empty cell: place if affordable
                             cost = sim.get_component_cost(selected)
-                            if sim.store.money >= cost:
-                                if sim.place_component(cx, cy, ReactorComponent(stats=selected)):
-                                    sim.store.money -= cost
+                            if is_key_down(KEY_SHIFT):
+                                for (mcx, mcy, _, mcomp) in sim.grid.iter_cells():
+                                    if not mcomp:
+                                        if sim.store.money >= cost:
+                                            if sim.place_component(mcx, mcy, ReactorComponent(stats=selected), recompute_capacities=False):
+                                                sim.store.money -= cost
+                                        else:
+                                            break
+                                sim.recompute_max_capacities()
+                            else: 
+                                if sim.store.money >= cost:
+                                    if sim.place_component(cx, cy, ReactorComponent(stats=selected)):
+                                        sim.store.money -= cost
                         elif Simulation.can_replace(existing, selected):
                             # Click-to-replace: always active for compatible components
                             cost = sim.get_component_cost(selected)

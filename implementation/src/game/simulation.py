@@ -1130,7 +1130,7 @@ class Simulation:
         """
         existing_type = existing.stats
         # Same exact component type and not depleted → cannot replace
-        if existing_type.name == new_type.name and not existing.depleted:
+        if existing_type.name == new_type.name and not existing.depleted and not existing.heat:
             return False
         # Both are fuel cells (have CellData) → can replace
         if existing_type.pulses_produced > 0 and new_type.pulses_produced > 0:
