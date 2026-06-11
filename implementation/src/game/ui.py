@@ -31,11 +31,20 @@ from game.upgrades import UpgradeManager, UpgradeType
 
 @dataclass
 class Ui:
+    btn_big: Texture2D
+    btn_big_hover: Texture2D
+    btn_big_pressed: Texture2D
+    btn_med: Texture2D
+    btn_med_hover: Texture2D
+    btn_med_pressed: Texture2D
+    btn_small: Texture2D
+    btn_small_hover: Texture2D
+    btn_small_pressed: Texture2D
     heat_icon: Optional[Texture2D] = None
     power_icon: Optional[Texture2D] = None
-    button_base: Optional[Texture2D] = None
-    button_hover: Optional[Texture2D] = None
-    button_pressed: Optional[Texture2D] = None
+    button_small_base: Optional[Texture2D] = None
+    button_small_hover: Optional[Texture2D] = None
+    button_small_pressed: Optional[Texture2D] = None
     icon_button: Optional[Texture2D] = None
     icon_button_hover: Optional[Texture2D] = None
     icon_button_pressed: Optional[Texture2D] = None
@@ -70,6 +79,21 @@ class Ui:
         text_x = x + max(1, size // 2 - 2)
         text_y = y + max(-1, (size - 10) // 2 - 1)
         draw_text("!", text_x, text_y, 10, Color(255, 236, 150, 255))
+
+    def draw_button(self, bx : int, by : int, btn_pressed : bool, btn_hover : bool, label : str, size : int):
+        if size == 3:
+            tex = self.btn_big_pressed if btn_pressed else (self.btn_big_hover if btn_hover else self.btn_big)
+        elif size == 2:
+            tex = self.btn_med_pressed if btn_pressed else (self.btn_med_hover if btn_hover else self.btn_med)
+        else:
+            tex = self.btn_small_pressed if btn_pressed else (self.btn_small_hover if btn_hover else self.btn_small)
+        draw_texture_ex(tex, Vector2(bx, by), 0.0, 1.0, Color(255, 255, 255, 255))
+        font = _fit_font_size(label, tex.width - 20, 14, min_size=9)
+        text_w = _measure(label, font)
+        tx = bx + max(0, (tex.width - text_w) // 2)
+        ty = by + max(0, (tex.height - font) // 2) 
+        if btn_pressed: ty += 2
+        draw_text(label, tx, ty, font, Color(220, 220, 220, 255))
 
     def draw(
         self,
@@ -178,29 +202,8 @@ class Ui:
         vent_rate = format_number_with_suffix(sim.auto_vent_rate_per_tick(), max_decimals=2)
         vent_cap = format_number_with_suffix(sim.preview_active_dissipation, max_decimals=3)
         label = f"-{vent_amt} Heat (cap {vent_cap}/t)"
-        bx, by = layout.vent_x, layout.vent_y
-        tex = self.button_base
-        if pressed_vent and self.button_pressed is not None:
-            tex = self.button_pressed
-        elif hover_vent and self.button_hover is not None:
-            tex = self.button_hover
-
-        if tex is not None:
-            draw_texture_ex(tex, Vector2(bx, by), 0.0, 1.0, Color(255, 255, 255, 255))
-            btn_w = tex.width
-            btn_h = tex.height
-            btn_text_w = tex.width - 20
-        else:
-            btn_w = 220
-            btn_h = 28
-            draw_rectangle(bx, by, btn_w, btn_h, Color(60, 60, 70, 255))
-            btn_text_w = 204
-        vent_font = _fit_font_size(label, btn_text_w, 14, min_size=9)
-        vent_text_w = _measure(label, vent_font)
-        tx = bx + max(0, (btn_w - vent_text_w) // 2)
-        ty = by + max(0, (btn_h - vent_font) // 2) 
-        if pressed_vent and self.button_pressed is not None: ty += 2
-        draw_text(label, tx, ty, vent_font, Color(220, 220, 220, 255))
+        
+        self.draw_button(layout.vent_x, layout.vent_y, pressed_vent, hover_vent, label, 3)
 
         # Sell All Power / Scrounge button
         # RE: "Sell All Power: +{power} $ (+{autoSellRate} $ per tick)"
@@ -211,29 +214,8 @@ class Ui:
             power_str = format_number_with_suffix(sim.stored_power, max_decimals=2)
             rate_str = format_number_with_suffix(sim.auto_sell_rate_per_tick(), max_decimals=2)
             label = f"+{power_str}$ (+{rate_str}$/t)"
-        bx, by = layout.sell_x, layout.sell_y
-        tex = self.button_base
-        if pressed_sell and self.button_pressed is not None:
-            tex = self.button_pressed
-        elif hover_sell and self.button_hover is not None:
-            tex = self.button_hover
 
-        if tex is not None:
-            draw_texture_ex(tex, Vector2(bx, by), 0.0, 1.0, Color(255, 255, 255, 255))
-            btn_w = tex.width
-            btn_h = tex.height
-            btn_text_w = tex.width - 20
-        else:
-            btn_w = 320
-            btn_h = 28
-            draw_rectangle(bx, by, btn_w, btn_h, Color(60, 60, 70, 255))
-            btn_text_w = 304
-        sell_font = _fit_font_size(label, btn_text_w, 14, min_size=9)
-        sell_text_w = _measure(label, sell_font)
-        tx = bx + max(0, (btn_w - sell_text_w) // 2)
-        ty = by + max(0, (btn_h - sell_font) // 2) 
-        if pressed_sell and self.button_pressed is not None: ty += 2
-        draw_text(label, tx, ty, sell_font, Color(220, 220, 220, 255))
+        self.draw_button(layout.sell_x, layout.sell_y, pressed_sell, hover_sell, label, 3)
 
         # Stats panel is hidden until we wire the real stats page UI.
         new_selected, hovered = self.draw_store(sim, layout, mouse_x, mouse_y, mouse_pressed)
@@ -501,7 +483,8 @@ class Ui:
         layout: Layout,
         mouse_x: float,
         mouse_y: float,
-        mouse_pressed: bool,
+        mouse_down: bool,
+        mouse_released: bool,
     ) -> None:
         """Draw the upgrade icon grid and handle hover/click.
 
@@ -543,6 +526,9 @@ class Ui:
             # Pick background texture — no lock button, use dimmed tint instead
             if is_one_time_owned:
                 tex = self.icon_button
+            elif mouse_down and is_hover and can_buy:
+                tex = self.icon_button_pressed
+                y += 2
             elif is_hover and can_buy:
                 tex = self.icon_button_hover
             else:
@@ -568,20 +554,14 @@ class Ui:
             if sprites:
                 icon_tex = sprites.get(u.icon)
                 if icon_tex is not None:
-                    # Scale to fit within button with margin
-                    margin = 8
-                    max_w = cell_w - margin * 2
-                    max_h = cell_h - margin * 2
-                    scale = min(max_w / max(1, icon_tex.width), max_h / max(1, icon_tex.height))
-                    dw = icon_tex.width * scale
-                    dh = icon_tex.height * scale
-                    ix = x + (cell_w - dw) / 2
-                    iy = y + (cell_h - dh) / 2
-                    draw_texture_pro(
+                    ix = x + (cell_w - icon_tex.width) / 2
+                    iy = y + (cell_h - icon_tex.height) / 2 - 3 
+                    draw_texture_ex(
                         icon_tex,
-                        Rectangle(0, 0, icon_tex.width, icon_tex.height),
-                        Rectangle(ix, iy, dw, dh),
-                        Vector2(0, 0), 0.0, tint,
+                        Vector2(ix, iy),
+                        0.0,
+                        1.0,
+                        tint
                     )
 
                 # Category overlay in bottom-right corner
@@ -615,7 +595,7 @@ class Ui:
                 hovered_upgrade = u
 
             # Click to purchase
-            if is_hover and mouse_pressed and can_buy:
+            if is_hover and mouse_released and can_buy:
                 sim.store.money, sim.store.exotic_particles = mgr.purchase(
                     u.index, sim.store.money, sim.store.exotic_particles
                 )
@@ -760,7 +740,8 @@ class Ui:
         layout: Layout,
         mouse_x: float,
         mouse_y: float,
-        mouse_pressed: bool,
+        mouse_down: bool,
+        mouse_released: bool,
         dt: float,
     ) -> None:
         """Draw the Options panel in the grid content area."""
@@ -777,30 +758,6 @@ class Ui:
                 0.0, 1.0,
                 Color(255, 255, 255, 255),
             )
-
-        def draw_button_label(label: str, x: int, y: int, base_size: int, min_size: int = 8, pressed: bool = False) -> None:
-            w, h = btn_med.width, btn_med.height
-            hover_upgrades = (layout.main_upgrades_x <= mx <= layout.main_upgrades_x + uw and
-                              layout.main_upgrades_y <= my <= layout.main_upgrades_y + uh)
-            upg_tex = btn_med_pressed if sim.view_mode == "upgrades" else (btn_med_hover if hover_upgrades else btn_med)
-            draw_texture_pro(
-                upg_tex,
-                Rectangle(0, 0, upg_tex.width, upg_tex.height),
-                Rectangle(layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-
-            fs = base_size
-            max_w = max(8, w - 10)
-            while fs > min_size and measure_text(label, fs) > max_w:
-                fs -= 1
-            tw = measure_text(label, fs)
-            tx = x + max(0, (w - tw) // 2)
-            ty = y + max(0, (h - fs) // 2)
-            if pressed: ty += 2
-            draw_text(label, tx, ty, fs, Color(220, 220, 220, 255))
 
         content_x = layout.upgrade_grid_x
         content_y = layout.upgrade_grid_y + 4
@@ -833,27 +790,15 @@ class Ui:
             bg_hover = Color(100, 70, 140, 255)
             border_color = Color(100, 80, 130, 255)
 
-        pbtn_w = _measure(prestige_label, font_sm) + 24
-        pbtn_h = 26
+        pbtn_w = self.btn_big.width
+        pbtn_h = self.btn_big.height
         pbtn_x = content_x + (content_w - pbtn_w) // 2
         pbtn_y = content_y
-
         hover_prestige_btn = (pbtn_x <= mouse_x <= pbtn_x + pbtn_w and
                               pbtn_y <= mouse_y <= pbtn_y + pbtn_h)
+        self.draw_button(pbtn_x, pbtn_y, hover_prestige_btn and mouse_down, hover_prestige_btn, prestige_label, 3)
 
-        if hover_prestige_btn and can_click:
-            pbg = bg_hover
-        elif can_click:
-            pbg = bg_normal
-        else:
-            pbg = Color(40, 35, 50, 255)
-        draw_rectangle(pbtn_x, pbtn_y, pbtn_w, pbtn_h, pbg)
-        draw_rectangle_lines(pbtn_x, pbtn_y, pbtn_w, pbtn_h, border_color)
-        plw = _measure(prestige_label, font_sm)
-        ptint = text_color if can_click else Color(140, 140, 140, 255)
-        draw_text(prestige_label, pbtn_x + (pbtn_w - plw) // 2, pbtn_y + 7, font_sm, ptint)
-
-        if hover_prestige_btn and mouse_pressed and can_click:
+        if hover_prestige_btn and mouse_released and can_click:
             if sim.prestige_can_refund:
                 sim.refund_prestige_upgrades()
             elif sim.prestige_confirming:
@@ -861,7 +806,7 @@ class Ui:
             else:
                 sim.prestige_confirming = True
 
-        y = content_y + 34
+        y = content_y + 40
         desc = (
             "When you 'prestige', you will lose all components, money, power, heat, and upgrades. "
             "In exchange, you'll get exotic particles, which will let you get powerful, permanent "
@@ -874,10 +819,10 @@ class Ui:
             y += line_h
 
         # Reset Game button
-        y += line_h
-        btn_w = 160
-        btn_h = 28
-        btn_x = content_x + (content_w - btn_w) // 2
+        y += line_h + 150
+        btn_w = self.btn_big.width
+        btn_h = self.btn_big.height
+        btn_x = content_x + (content_w - pbtn_w) // 2
         btn_y = y
 
         hover_reset = (btn_x <= mouse_x <= btn_x + btn_w and
@@ -887,7 +832,7 @@ class Ui:
         if sim.reset_confirm_timer > 0:
             sim.reset_confirm_timer -= dt
 
-        if hover_reset and mouse_pressed:
+        if hover_reset and mouse_released:
             if sim.reset_confirm_timer > 0:
                 # Second click within timer — perform reset
                 sim.reset_game()
@@ -898,24 +843,19 @@ class Ui:
 
         # Draw button
         if sim.reset_confirm_timer > 0:
-            bg_color = Color(180, 50, 50, 255) if hover_reset else Color(140, 40, 40, 255)
             label = "Click again to confirm"
         else:
-            bg_color = Color(80, 40, 40, 255) if hover_reset else Color(60, 30, 30, 255)
             label = "Reset Game"
 
-        draw_rectangle(btn_x, btn_y, btn_w, btn_h, bg_color)
-        draw_rectangle_lines(btn_x, btn_y, btn_w, btn_h, Color(120, 60, 60, 255))
-        lw = _measure(label, font_sm)
-        draw_text(label, btn_x + (btn_w - lw) // 2, btn_y + 7, font_sm, text_color)
+        self.draw_button(btn_x, btn_y, hover_reset and mouse_down, hover_reset, label, 3)
 
         # ── Export / Import buttons ──────────────────────────────────
         if self.save_dir is not None:
             from game.save import export_save_old, export_save_new, import_save_from_file
 
             ei_y = btn_y + btn_h + 12
-            ei_btn_w = 96
-            ei_btn_h = 26
+            ei_btn_w = self.btn_med.width
+            ei_btn_h = self.btn_med.height
             gap = 10
             total_w = ei_btn_w * 2 + gap
             ei_start_x = content_x + (content_w - total_w) // 2
@@ -924,13 +864,9 @@ class Ui:
             old_x = ei_start_x
             hover_old = (old_x <= mouse_x <= old_x + ei_btn_w and
                          ei_y <= mouse_y <= ei_y + ei_btn_h)
-            old_bg = Color(60, 80, 60, 255) if hover_old else Color(40, 60, 40, 255)
-            draw_rectangle(old_x, ei_y, ei_btn_w, ei_btn_h, old_bg)
-            draw_rectangle_lines(old_x, ei_y, ei_btn_w, ei_btn_h, Color(80, 120, 80, 255))
-            old_lw = _measure("Export Old", font_sm)
-            draw_text("Export Old", old_x + (ei_btn_w - old_lw) // 2, ei_y + 7, font_sm, text_color)
+            self.draw_button(old_x, ei_y, hover_old and mouse_down, hover_old, "Export Old", 2)
 
-            if hover_old and mouse_pressed:
+            if hover_old and mouse_released:
                 if _WEB:
                     export_save_old(sim)
                 else:
@@ -940,13 +876,9 @@ class Ui:
             new_x = ei_start_x + ei_btn_w + gap
             hover_new = (new_x <= mouse_x <= new_x + ei_btn_w and
                          ei_y <= mouse_y <= ei_y + ei_btn_h)
-            new_bg = Color(50, 80, 90, 255) if hover_new else Color(35, 60, 70, 255)
-            draw_rectangle(new_x, ei_y, ei_btn_w, ei_btn_h, new_bg)
-            draw_rectangle_lines(new_x, ei_y, ei_btn_w, ei_btn_h, Color(70, 110, 125, 255))
-            new_lw = _measure("Export New", font_sm)
-            draw_text("Export New", new_x + (ei_btn_w - new_lw) // 2, ei_y + 7, font_sm, text_color)
+            self.draw_button(new_x, ei_y, hover_new and mouse_down, hover_new, "Export New", 2)
 
-            if hover_new and mouse_pressed:
+            if hover_new and mouse_released:
                 if _WEB:
                     export_save_new(sim)
                 else:
@@ -957,13 +889,9 @@ class Ui:
             im_x = content_x + (content_w - ei_btn_w) // 2
             hover_import = (im_x <= mouse_x <= im_x + ei_btn_w and
                             im_y <= mouse_y <= im_y + ei_btn_h)
-            im_bg = Color(50, 60, 80, 255) if hover_import else Color(35, 45, 60, 255)
-            draw_rectangle(im_x, im_y, ei_btn_w, ei_btn_h, im_bg)
-            draw_rectangle_lines(im_x, im_y, ei_btn_w, ei_btn_h, Color(70, 90, 120, 255))
-            im_lw = _measure("Import", font_sm)
-            draw_text("Import", im_x + (ei_btn_w - im_lw) // 2, im_y + 7, font_sm, text_color)
+            self.draw_button(im_x, im_y, hover_import and mouse_down, hover_import, "Import", 2)
 
-            if hover_import and mouse_pressed:
+            if hover_import and mouse_released:
                 import_save_from_file(sim)
 
     def draw_help_panel(self, sim: Simulation, layout: Layout, wheel_move: float = 0.0, mouse_x: float = 0.0, mouse_y: float = 0.0, mouse_down: bool = False) -> None:

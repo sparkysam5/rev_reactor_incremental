@@ -249,9 +249,15 @@ async def main() -> None:
     ui = Ui(
         heat_icon=heat_icon,
         power_icon=power_icon,
-        button_base=btn_big,
-        button_hover=btn_big_hover,
-        button_pressed=btn_big_pressed,
+        btn_big=btn_big,
+        btn_big_hover=btn_big_hover,
+        btn_big_pressed=btn_big_pressed,
+        btn_med=btn_med,
+        btn_med_hover=btn_med_hover,
+        btn_med_pressed=btn_med_pressed,
+        btn_small=btn_small,
+        btn_small_hover=btn_small_hover,
+        btn_small_pressed=btn_small_pressed,
         icon_button=icon_btn,
         icon_button_hover=icon_btn_hover,
         icon_button_pressed=icon_btn_pressed,
@@ -765,13 +771,15 @@ async def main() -> None:
                 ui.draw_upgrade_grid(
                     sim, layout,
                     mouse_x=mx, mouse_y=my,
-                    mouse_pressed=is_mouse_button_pressed(MOUSE_BUTTON_LEFT),
+                    mouse_down=is_mouse_button_down(MOUSE_BUTTON_LEFT),
+                    mouse_released=is_mouse_button_released(MOUSE_BUTTON_LEFT)
                 )
             elif sim.view_mode == "statistics":
                 ui.draw_statistics_panel(sim, layout)
             elif sim.view_mode == "options":
                 ui.draw_options_panel(sim, layout, mouse_x=mx, mouse_y=my,
-                                      mouse_pressed=is_mouse_button_pressed(MOUSE_BUTTON_LEFT),
+                                      mouse_down=is_mouse_button_down(MOUSE_BUTTON_LEFT),
+                                      mouse_released=is_mouse_button_released(MOUSE_BUTTON_LEFT),
                                       dt=dt)
             elif sim.view_mode == "help":
                 ui.draw_help_panel(sim, layout, wheel_move=get_mouse_wheel_move(), mouse_x=mx, mouse_y=my, mouse_down=is_mouse_button_down(MOUSE_BUTTON_LEFT))
@@ -801,58 +809,13 @@ async def main() -> None:
                 draw_text(label, tx, ty, fs, Color(220, 220, 220, 255))
 
             # Top-left upgrade tabs
-            upg_tex = btn_med_pressed if sim.view_mode == "upgrades" else (btn_med_hover if hover_upgrades else btn_med)
-            draw_texture_pro(
-                upg_tex,
-                Rectangle(0, 0, upg_tex.width, upg_tex.height),
-                Rectangle(layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-            draw_button_label("Upgrades", layout.main_upgrades_x, layout.main_upgrades_y, upg_tex.width, upg_tex.height, 13, 10, sim.view_mode == "upgrades")
-            prs_tex = btn_med_pressed if sim.view_mode == "prestige" else (btn_med_hover if hover_prestige else btn_med)
-            draw_texture_pro(
-                prs_tex,
-                Rectangle(0, 0, prs_tex.width, prs_tex.height),
-                Rectangle(layout.prestige_upgrades_x, layout.prestige_upgrades_y, prs_tex.width, prs_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-            draw_button_label("Prestige", layout.prestige_upgrades_x, layout.prestige_upgrades_y, prs_tex.width, prs_tex.height, 13, 10, sim.view_mode == "prestige")
+            ui.draw_button(layout.main_upgrades_x, layout.main_upgrades_y, sim.view_mode == "upgrades", hover_upgrades, "Upgrades", 2)
+            ui.draw_button(layout.prestige_upgrades_x, layout.prestige_upgrades_y, sim.view_mode == "prestige", hover_prestige, "Prestige", 2)
 
             # Bottom buttons (Options / Statistics / Help)
-            opt_tex = btn_small_pressed if sim.view_mode == "options" else (btn_small_hover if hover_options else btn_small)
-            draw_texture_pro(
-                opt_tex,
-                Rectangle(0, 0, opt_tex.width, opt_tex.height),
-                Rectangle(layout.options_x, layout.options_y, opt_tex.width, opt_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-            draw_button_label("Options", layout.options_x, layout.options_y, opt_tex.width, opt_tex.height, 10, 8, sim.view_mode == "options")
-            stats_tex = btn_small_pressed if sim.view_mode == "statistics" else (btn_small_hover if hover_stats else btn_small)
-            draw_texture_pro(
-                stats_tex,
-                Rectangle(0, 0, stats_tex.width, stats_tex.height),
-                Rectangle(layout.stats_x_btn, layout.stats_y_btn, stats_tex.width, stats_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-            draw_button_label("Statistics", layout.stats_x_btn, layout.stats_y_btn, stats_tex.width, stats_tex.height, 10, 8, sim.view_mode == "statistics")
-            help_tex = btn_small_pressed if sim.view_mode == "help" else (btn_small_hover if hover_help else btn_small)
-            draw_texture_pro(
-                help_tex,
-                Rectangle(0, 0, help_tex.width, help_tex.height),
-                Rectangle(layout.help_x, layout.help_y, help_tex.width, help_tex.height),
-                Vector2(0, 0),
-                0.0,
-                Color(255, 255, 255, 255),
-            )
-            draw_button_label("Help", layout.help_x, layout.help_y, help_tex.width, help_tex.height, 10, 8, sim.view_mode == "help")
+            ui.draw_button(layout.options_x, layout.options_y, sim.view_mode == "options", hover_prestige, "Options", 1)
+            ui.draw_button(layout.stats_x_btn, layout.stats_y_btn, sim.view_mode == "statistics", hover_prestige, "Statistics", 1)
+            ui.draw_button(layout.help_x, layout.help_y, sim.view_mode == "help", hover_prestige, "Help", 1)
 
             # Back button (visible only when in upgrade/prestige view)
             if sim.view_mode != "reactor":

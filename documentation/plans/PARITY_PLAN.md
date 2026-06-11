@@ -3,12 +3,12 @@
 - [x] Power / Heat icons covering indicator bars
 - [x] Improve power/heat icon alignment
 - [x] Background cell colour
-- [ ] Options Screen missing textures
+- [x] Options Screen missing textures
 - [ ] Formula display in help menu
 - [ ] EP Formula not listed
 - [x] Upgrade screen has wrong colour
 - [x] Prestige text needs reformatting to be neater
-- [ ] Upgrade Colours
+- [x] Upgrade Colours
 - [x] Decrease brightness more for out of budget upgrades
 - [x] Text overflow on viewing money + EP on prestige page
 - [x] "Replace mode" described incorrectly
