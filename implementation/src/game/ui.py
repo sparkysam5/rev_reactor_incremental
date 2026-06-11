@@ -542,14 +542,16 @@ class Ui:
 
             # Pick background texture — no lock button, use dimmed tint instead
             if is_one_time_owned:
-                tex = self.icon_button_pressed
+                tex = self.icon_button
             elif is_hover and can_buy:
                 tex = self.icon_button_hover
             else:
                 tex = self.icon_button
 
+            can_afford = (is_one_time_owned and u.level) or  can_buy
+
             # Bright if purchasable, dim otherwise
-            if can_buy:
+            if can_afford:
                 tint = Color(255, 255, 255, 255)
             else:
                 tint = Color(55, 55, 55, 255)
@@ -587,22 +589,24 @@ class Ui:
                 if cat_tex is not None:
                     if u.level < 7:
                         cat_tint = [
-                            (255, 255, 255, 255),
-                            (0, 255, 0, 255),
-                            (255, 182, 53, 255),
-                            (255, 182, 53, 255),
-                            (153, 153, 153, 255),
-                            (241, 227, 44, 255),
-                            (160, 255, 250, 255)
+                            Color(255, 255, 255, 255),
+                            Color(0, 255, 0, 255),
+                            Color(255, 182, 53, 255),
+                            Color(255, 182, 53, 255),
+                            Color(153, 153, 153, 255),
+                            Color(241, 227, 44, 255),
+                            Color(160, 255, 250, 255)
                         ][u.level]
                     else:
-                        cat_tint = (121, 0, 188, 255)
+                        cat_tint = Color(121, 0, 188, 255)
+                    if not can_afford:
+                        cat_tint = Color(cat_tint[0] // 4, cat_tint[1] // 4, cat_tint[2] // 4, 255)
                     cx = x + cell_w - cat_tex.width - 2
                     cy = y + cell_h - cat_tex.height - 2
                     draw_texture_ex(cat_tex, Vector2(cx, cy), 0.0, 1.0, cat_tint)
 
             # Level indicator (bottom-left corner, above category overlay)
-            if u.level > 0:
+            if not is_one_time_owned and u.level > 0:
                 lvl_text = str(u.level)
                 draw_text(lvl_text, x + 4, y + cell_h - 14, 10, Color(200, 255, 200, 255))
 

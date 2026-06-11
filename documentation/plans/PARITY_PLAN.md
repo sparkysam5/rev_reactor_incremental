@@ -20,4 +20,3 @@
 - [x] Text moves down when button pressed
 - [x] Back button only triggers on release (prevents accidental placements)
 - [x] Fixed upgrade ordering issue with importing and exporting old saves (REORDERS non-prestige upgrades for any recent new scheme saves)
-- [ ] Fixed importing a prestiged save file locking prestige tab

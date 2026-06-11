@@ -472,7 +472,6 @@ def _build_original_export_text(sim: Simulation) -> str | None:
 
 
 def _parse_original_save(text: str) -> dict | None:
-    print(text)
     """Parse original game pipe-delimited save format into our dict format.
 
     Format: Key:Value|Key:Value|...|
